@@ -15,44 +15,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install Puppeteer
-        run: npm install puppeteer
-
-      - name: Capture Weather Screenshot
+      - name: Download and Process Image
         run: |
-          node -e "
-          const puppeteer = require('puppeteer');
-          (async () => {
-            // THE FIX: We add --no-sandbox to prevent GitHub crashes
-            const browser = await puppeteer.launch({
-              args: ['--no-sandbox', '--disable-setuid-sandbox'] 
-            });
-            const page = await browser.newPage();
-            
-            // Set Kindle Resolution
-            await page.setViewport({width: 600, height: 800});
-            
-            // Go to Weather (Clean Layout)
-            await page.goto('https://wttr.in/Mumbai?3&GF&lang=en', {waitUntil: 'networkidle0'});
-            
-            // Take Screenshot
-            await page.screenshot({path: 'weather.png'});
-            await browser.close();
-          })();
-          "
-
-      - name: Convert to Grayscale
-        # Uses ImageMagick to fix the 'Black Bar' issue
-        run: |
+          # 1. Install ImageMagick (Standard Linux tool for image editing)
+          sudo apt-get update
           sudo apt-get install -y imagemagick
-          convert weather.png -colorspace Gray -depth 8 -type Grayscale weather-gray.png
 
-      - name: Save Image
+          # 2. Download directly from wttr.in (It generates the PNG for us)
+          # Mumbai.png = The location
+          # ?0 = Current weather only (Removes complex forecast text)
+          # ?Q = Quiet version (Cleaner)
+          curl "https://wttr.in/Mumbai.png?0Q" --output weather-orig.png
+
+          # 3. Convert to Kindle Grayscale (Critical for 5.3.3)
+          # This forces the image into the 8-bit format your screen expects
+          convert weather-orig.png -colorspace Gray -depth 8 -type Grayscale weather-gray.png
+
+      - name: Save Image to GitHub
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
