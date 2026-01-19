@@ -2,207 +2,212 @@
 <html lang="hi">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kindle Weather Hindi</title>
     <style>
+        /* RESET & BASICS */
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 18px; background: #fff; color: #000; font-family: "Arial", sans-serif; width: 600px; height: 800px; overflow: hidden; }
-        .wrap { width: 100%; }
+        body {
+            margin: 0;
+            padding: 15px;
+            background-color: white;
+            color: black;
+            /* CRITICAL: Force exact Kindle resolution */
+            width: 600px;
+            height: 800px;
+            overflow: hidden; /* Cut off anything that doesn't fit */
+            
+            /* Font stack optimized for Hindi on Linux */
+            font-family: "Noto Sans Devanagari", "Lohit Devanagari", "Arial Unicode MS", sans-serif;
+        }
+
+        /* HEADER */
+        .topbar { 
+            border-bottom: 4px solid black; 
+            padding-bottom: 5px; 
+            margin-bottom: 15px; 
+            overflow: hidden; 
+        }
+        .city { float: left; font-size: 32px; font-weight: bold; width: 75%; }
+        .clock { float: right; font-size: 24px; font-weight: bold; margin-top: 5px;}
+
+        /* MAIN DISPLAY */
+        .bigrow { margin-bottom: 15px; overflow: hidden; display: flex; align-items: center;}
+        .tempblock { float: left; width: 50%; }
+        .temp { font-size: 110px; font-weight: bold; line-height: 1; letter-spacing: -4px; }
         
-        /* Top Bar */
-        .topbar { border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 12px; overflow: hidden; }
-        .city { font-size: 36px; font-weight: 900; line-height: 1.1; float: left; width: 70%; }
-        .clock { float: right; font-size: 20px; font-weight: 900; margin-top: 10px; }
+        .condblock { float: left; width: 50%; padding-left: 10px; }
+        .cond { font-size: 34px; font-weight: bold; display: block; margin-bottom: 8px;}
+        .aqi { 
+            display: inline-block; 
+            border: 2px solid black; 
+            border-radius: 12px; 
+            padding: 2px 10px; 
+            font-weight: bold; 
+            font-size: 18px; 
+        }
+        .feels { display: block; margin-top: 8px; font-size: 20px; opacity: 0.8; font-weight: bold;}
 
-        /* Main Temp Row */
-        .bigrow { overflow: hidden; margin-top: 10px; margin-bottom: 20px; }
-        .tempblock { float: left; margin-right: 18px; }
-        .temp { font-size: 110px; font-weight: 900; line-height: 0.95; }
-        .condblock { overflow: hidden; padding-top: 10px; }
-        .cond { font-size: 32px; font-weight: 900; display: block; margin-bottom: 5px; }
-        .aqi { display: inline-block; padding: 4px 10px; border: 2px solid #000; border-radius: 20px; font-weight: bold; font-size: 16px; margin-right: 10px;}
-        .feels { display: block; font-size: 20px; font-weight: bold; margin-top: 5px; opacity: 0.8; }
-
-        /* Cards Grid */
-        .cards { display: flex; justify-content: space-between; margin-top: 10px; }
-        .card { width: 32%; border: 3px solid #000; border-radius: 14px; padding: 10px; height: 230px; }
-        .cardtitle { font-size: 18px; font-weight: 900; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 5px; }
+        /* CARDS ROW */
+        .cards { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .card { 
+            width: 32%; 
+            border: 3px solid black; 
+            border-radius: 10px; 
+            padding: 8px; 
+            height: 220px; 
+        }
+        .cardtitle { 
+            font-size: 18px; 
+            font-weight: bold; 
+            border-bottom: 2px solid black; 
+            padding-bottom: 4px; 
+            margin-bottom: 4px;
+        }
         
-        /* Key-Value Tables inside Cards */
-        .kvtable { width: 100%; font-size: 16px; font-weight: 700; }
-        .kvtable td { padding: 4px 0; }
-        .k { opacity: 0.8; }
-        .v { text-align: right; font-weight: 900; }
+        /* DATA TABLES */
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 3px 0; font-size: 17px; font-weight: bold;}
+        .k { text-align: left; opacity: 0.7; }
+        .v { text-align: right; }
 
-        /* Forecast Section */
-        .forecastCard { margin-top: 15px; border: 3px solid #000; border-radius: 14px; padding: 10px; }
-        .forecastTitle { font-size: 18px; font-weight: 900; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 5px; }
-        table.forecast { width: 100%; font-size: 18px; font-weight: 700; border-collapse: collapse; }
-        table.forecast td { padding: 5px 0; border-bottom: 1px solid #ccc; }
-        table.forecast tr:last-child td { border-bottom: none; }
-
-        /* Footer */
-        .status { margin-top: 15px; font-size: 14px; text-align: center; color: #555; }
+        /* FORECAST */
+        .forecastCard { 
+            border: 3px solid black; 
+            border-radius: 10px; 
+            padding: 10px; 
+        }
+        .forecastTitle { font-size: 20px; font-weight: bold; border-bottom: 2px solid black; margin-bottom: 5px; padding-bottom: 5px;}
+        .forecastTable td { border-bottom: 1px solid #ccc; padding: 6px 0; font-size: 20px;}
+        
+        /* FOOTER */
+        .footer { 
+            position: absolute; 
+            bottom: 5px; 
+            width: 100%; 
+            text-align: center; 
+            font-size: 14px; 
+            color: #555; 
+        }
     </style>
 </head>
 <body>
 
-    <div class="wrap">
-        <div class="topbar">
-            <div class="city" id="city">LOADING...</div>
-            <div class="clock" id="clock">--:--</div>
-        </div>
-
-        <div class="bigrow">
-            <div class="tempblock"><span class="temp" id="temp">--</span></div>
-            <div class="condblock">
-                <span class="cond" id="cond">--</span>
-                <span class="aqi" id="aqi">AQI --</span>
-                <span class="feels" id="feels">महसूस --°</span>
-            </div>
-        </div>
-
-        <div class="cards">
-            <div class="card">
-                <div class="cardtitle">ⓘ आज</div>
-                <table class="kvtable">
-                    <tr><td class="k">आर्द्रता</td><td class="v" id="hum">--%</td></tr>
-                    <tr><td class="k">बारिश</td><td class="v" id="rain">--mm</td></tr>
-                    <tr><td class="k">UV</td><td class="v" id="uv">--</td></tr>
-                    <tr><td class="k">दृश्यता</td><td class="v" id="vis">--km</td></tr>
-                </table>
-            </div>
-
-            <div class="card">
-                <div class="cardtitle">〰 हवा</div>
-                <table class="kvtable">
-                    <tr><td class="k">गति</td><td class="v" id="wspd">--</td></tr>
-                    <tr><td class="k">झोंके</td><td class="v" id="wgust">--</td></tr>
-                    <tr><td class="k">दिशा</td><td class="v" id="wdeg">--</td></tr>
-                    <tr><td class="k">सुई</td><td class="v" id="wdir">--</td></tr>
-                </table>
-            </div>
-
-            <div class="card">
-                <div class="cardtitle">☼ सूर्य/चंद्र</div>
-                <table class="kvtable">
-                    <tr><td class="k">उदय</td><td class="v" id="sunrise">--</td></tr>
-                    <tr><td class="k">अस्त</td><td class="v" id="sunset">--</td></tr>
-                    <tr><td class="k">चंद्रमा</td><td class="v" id="moonphase">--</td></tr>
-                    <tr><td class="k">रोशनी</td><td class="v" id="moonillum">--</td></tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="forecastCard">
-            <div class="forecastTitle">📅 आगामी पूर्वानुमान</div>
-            <table class="forecast">
-                <tbody id="forecastRows">
-                    <tr><td>डेटा लोड हो रहा है...</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="status" id="footerMsg">Last Update: --:--</div>
+    <div class="topbar">
+        <div class="city" id="city">MUMBAI</div>
+        <div class="clock" id="clock">--:--</div>
     </div>
 
+    <div class="bigrow">
+        <div class="tempblock"><div class="temp" id="temp">--</div></div>
+        <div class="condblock">
+            <div class="cond" id="cond">--</div>
+            <div class="aqi" id="aqi">AQI --</div>
+            <div class="feels" id="feels">महसूस --°</div>
+        </div>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <div class="cardtitle">ⓘ आज</div>
+            <table>
+                <tr><td class="k">आर्द्रता</td><td class="v" id="hum">--%</td></tr>
+                <tr><td class="k">बारिश</td><td class="v" id="rain">--mm</td></tr>
+                <tr><td class="k">UV</td><td class="v" id="uv">--</td></tr>
+                <tr><td class="k">दृश्यता</td><td class="v" id="vis">--km</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <div class="cardtitle">〰 हवा</div>
+            <table>
+                <tr><td class="k">गति</td><td class="v" id="wspd">--</td></tr>
+                <tr><td class="k">झोंके</td><td class="v" id="wgust">--</td></tr>
+                <tr><td class="k">दिशा</td><td class="v" id="wdeg">--</td></tr>
+                <tr><td class="k">सुई</td><td class="v" id="wdir">--</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <div class="cardtitle">☼ सूर्य/चंद्र</div>
+            <table>
+                <tr><td class="k">उदय</td><td class="v" id="sunrise">--</td></tr>
+                <tr><td class="k">अस्त</td><td class="v" id="sunset">--</td></tr>
+                <tr><td class="k">चंद्र</td><td class="v" id="moonphase">--</td></tr>
+                <tr><td class="k">रोशनी</td><td class="v" id="moonillum">--</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="forecastCard">
+        <div class="forecastTitle">📅 आगामी पूर्वानुमान</div>
+        <table class="forecastTable">
+            <tbody id="forecastRows"></tbody>
+        </table>
+    </div>
+
+    <div class="footer" id="footerMsg">Updated: --</div>
+
     <script>
-        // 1. Helper Functions
-        function pad2(n){ return (n<10?"0":"")+n; }
-        function fmtHM(d){ return pad2(d.getHours())+":"+pad2(d.getMinutes()); }
-        function degToCompass(deg){
-            var dirs=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-            var d=((deg%360)+360)%360;
-            return dirs[Math.round(d/22.5)%16];
+        // 1. Helpers
+        function degToCompass(num) {
+            var val = Math.floor((num / 22.5) + 0.5);
+            var arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+            return arr[(val % 16)];
         }
 
-        // 2. Main Render Function
+        // 2. Render Logic
         function renderWeather(j) {
             if(!j || !j.current) return;
+            var cur = j.current;
+            var loc = j.location;
+            var f = j.forecast.forecastday;
+            var astro = f[0].astro;
 
-            var loc = j.location || {};
-            var cur = j.current || {};
-            var f = j.forecast || {};
-            var f0 = (f.forecastday && f.forecastday[0]) ? f.forecastday[0] : {};
-            var astro = f0.astro || {};
-
-            // Header
-            document.getElementById("city").innerHTML = loc.name;
-            document.getElementById("clock").innerHTML = loc.localtime.split(" ")[1];
-
-            // Main Temp
-            document.getElementById("temp").innerHTML = Math.round(cur.temp_c) + "°";
-            document.getElementById("cond").innerHTML = cur.condition.text;
-            document.getElementById("feels").innerHTML = "महसूस: " + Math.round(cur.feelslike_c) + "°";
+            document.getElementById("city").innerText = loc.name;
+            document.getElementById("clock").innerText = loc.localtime.split(" ")[1];
             
-            // AQI (Handle missing data safely)
+            document.getElementById("temp").innerText = Math.round(cur.temp_c) + "°";
+            document.getElementById("cond").innerText = cur.condition.text;
+            document.getElementById("feels").innerText = "महसूस: " + Math.round(cur.feelslike_c) + "°";
+            
             var aqiVal = (cur.air_quality && cur.air_quality["us-epa-index"]) || "--";
-            document.getElementById("aqi").innerHTML = "AQI " + aqiVal;
+            document.getElementById("aqi").innerText = "AQI " + aqiVal;
 
-            // Details
-            document.getElementById("hum").innerHTML = cur.humidity + "%";
-            document.getElementById("rain").innerHTML = (cur.precip_mm || 0) + "mm";
-            document.getElementById("uv").innerHTML = cur.uv;
-            document.getElementById("vis").innerHTML = cur.vis_km + "km";
+            document.getElementById("hum").innerText = cur.humidity + "%";
+            document.getElementById("rain").innerText = (cur.precip_mm || 0) + "mm";
+            document.getElementById("uv").innerText = cur.uv;
+            document.getElementById("vis").innerText = cur.vis_km + "km";
 
-            // Wind
-            document.getElementById("wspd").innerHTML = cur.wind_kph + "kph";
-            document.getElementById("wgust").innerHTML = cur.gust_kph + "kph";
-            document.getElementById("wdeg").innerHTML = cur.wind_degree + "°";
-            document.getElementById("wdir").innerHTML = degToCompass(cur.wind_degree);
+            document.getElementById("wspd").innerText = cur.wind_kph;
+            document.getElementById("wgust").innerText = cur.gust_kph;
+            document.getElementById("wdeg").innerText = cur.wind_degree + "°";
+            document.getElementById("wdir").innerText = degToCompass(cur.wind_degree);
 
-            // Astro
-            document.getElementById("sunrise").innerHTML = astro.sunrise;
-            document.getElementById("sunset").innerHTML = astro.sunset;
-            document.getElementById("moonphase").innerHTML = astro.moon_phase;
-            document.getElementById("moonillum").innerHTML = astro.moon_illumination + "%";
+            document.getElementById("sunrise").innerText = astro.sunrise;
+            document.getElementById("sunset").innerText = astro.sunset;
+            document.getElementById("moonphase").innerText = astro.moon_phase;
+            document.getElementById("moonillum").innerText = astro.moon_illumination + "%";
 
-            // Forecast Loop
+            // Forecast
             var rows = "";
-            var daysMap = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]; // You can change to Hindi if preferred
+            // Helper to get Hindi Day Name
+            var days = ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"];
             
-            // Start from index 1 (Tomorrow)
             for(var i=1; i<=2; i++) {
-                var dayData = f.forecastday[i];
-                if(dayData) {
-                    var dateObj = new Date(dayData.date);
-                    var dayName = daysMap[dateObj.getDay()];
-                    var min = Math.round(dayData.day.mintemp_c);
-                    var max = Math.round(dayData.day.maxtemp_c);
-                    var txt = dayData.day.condition.text;
-                    rows += `<tr>
-                        <td style="width:15%">${dayName}</td>
-                        <td style="width:20%"><b>${max}°</b> / ${min}°</td>
-                        <td>${txt}</td>
-                    </tr>`;
-                }
+                var d = f[i];
+                var date = new Date(d.date);
+                var dayName = days[date.getDay()];
+                rows += `<tr>
+                    <td style="width:20%"><b>${dayName}</b></td>
+                    <td style="width:25%">${Math.round(d.day.maxtemp_c)}° / ${Math.round(d.day.mintemp_c)}°</td>
+                    <td>${d.day.condition.text}</td>
+                </tr>`;
             }
             document.getElementById("forecastRows").innerHTML = rows;
-            document.getElementById("footerMsg").innerHTML = "Updated: " + loc.localtime;
+            document.getElementById("footerMsg").innerText = "Updated: " + loc.localtime;
         }
 
-        // 3. Auto-Start Logic
+        // 3. Init
         document.addEventListener("DOMContentLoaded", () => {
-            if (window.injectedData) {
-                renderWeather(window.injectedData);
-            } else {
-                console.log("No Data found. Rendering Dummy Data for preview.");
-                // Dummy data for testing on PC
-                renderWeather({
-                    location: { name: "Mumbai (Preview)", localtime: "2026-01-19 14:30" },
-                    current: { 
-                        temp_c: 28, condition: {text: "Smoke"}, feelslike_c: 32, humidity: 60, 
-                        wind_kph: 15, gust_kph: 20, wind_degree: 180, vis_km: 4, uv: 5
-                    },
-                    forecast: {
-                        forecastday: [
-                            { astro: { sunrise: "07:15 AM", sunset: "06:20 PM", moon_phase: "Waxing", moon_illumination: 45 } },
-                            { date: "2026-01-20", day: { maxtemp_c: 30, mintemp_c: 22, condition: {text: "Sunny"} } },
-                            { date: "2026-01-21", day: { maxtemp_c: 29, mintemp_c: 21, condition: {text: "Clear"} } }
-                        ]
-                    }
-                });
-            }
+            if (window.injectedData) renderWeather(window.injectedData);
         });
     </script>
 </body>
