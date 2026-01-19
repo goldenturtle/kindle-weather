@@ -2,8 +2,9 @@
 <html lang="hi">
 <head>
     <meta charset="utf-8">
-    <title>Kindle Weather Classic</title>
+    <title>Kindle Weather Hindi Final</title>
     <style>
+        /* RESET & BASICS */
         * { box-sizing: border-box; }
         body {
             margin: 0; padding: 0;
@@ -14,14 +15,14 @@
             display: flex; flex-direction: column;
         }
 
-        /* 1. HEADER (Restored Layout) */
+        /* 1. HEADER */
         .header {
             background-color: black; color: white;
-            height: 90px; /* Taller to fit Date + Tithi */
+            height: 90px;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 25px;
         }
-        .city { font-size: 36px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        .city { font-size: 40px; font-weight: 900; letter-spacing: 1px; }
         
         .header-right { 
             text-align: right; display: flex; flex-direction: column; justify-content: center; 
@@ -29,25 +30,27 @@
         .date { font-size: 26px; font-weight: 900; margin-bottom: 4px; }
         .tithi { font-size: 20px; font-weight: 700; color: #ddd; }
 
-        /* 2. HERO (Clean, No Graphics) */
+        /* 2. HERO SECTION */
         .hero {
             display: flex; align-items: center;
             padding: 20px 25px;
             border-bottom: 3px solid black;
-            height: 240px;
+            height: 250px;
         }
-        .hero-left { width: 45%; }
-        .main-temp { font-size: 140px; font-weight: 900; line-height: 1; letter-spacing: -6px; }
+        .hero-left { width: 42%; }
+        .main-temp { font-size: 150px; font-weight: 900; line-height: 1; letter-spacing: -6px; }
         
-        .hero-right { width: 55%; padding-left: 20px; display: flex; flex-direction: column; justify-content: center; }
-        .main-cond { font-size: 42px; font-weight: 900; margin-bottom: 10px; line-height: 1.1; }
-        .summary { font-size: 22px; font-weight: 700; opacity: 0.8; line-height: 1.4; margin-bottom: 15px;}
+        .hero-right { width: 58%; padding-left: 20px; display: flex; flex-direction: column; justify-content: center; }
+        .main-cond { font-size: 44px; font-weight: 900; margin-bottom: 12px; line-height: 1.1; }
+        
+        /* New Summary Style */
+        .summary { font-size: 24px; font-weight: 700; opacity: 0.9; line-height: 1.4; margin-bottom: 15px; }
         
         .aqi-box { 
             display: inline-block; 
             border: 3px solid black; 
             color: black; 
-            padding: 5px 12px; 
+            padding: 6px 14px; 
             border-radius: 8px; 
             font-size: 20px; 
             font-weight: 900; 
@@ -63,11 +66,11 @@
         }
         .hour-box {
             width: 23%; text-align: center;
-            background: #f0f0f0; border-radius: 10px; padding: 10px 5px;
+            background: #f0f0f0; border-radius: 10px; padding: 12px 5px;
         }
         .h-time { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
         .h-temp { font-size: 40px; font-weight: 900; line-height: 1.1; }
-        .h-cond { font-size: 22px; margin: 5px 0; font-weight: 700; height: 50px; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .h-cond { font-size: 22px; margin: 5px 0; font-weight: 700; height: 50px; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
         .h-rain { font-size: 20px; font-weight: 900; color: #444; }
 
         /* 4. DETAILS GRID */
@@ -87,8 +90,8 @@
         .forecast-container { padding: 10px 25px; border-top: 2px solid black; }
         .f-row {
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #ccc; padding: 8px 0;
-            font-size: 26px; font-weight: 700;
+            border-bottom: 1px solid #ccc; padding: 10px 0;
+            font-size: 28px; font-weight: 700;
         }
         .f-row:last-child { border-bottom: none; }
         
@@ -155,31 +158,99 @@
     <div class="footer" id="footerMsg">Updated: --</div>
 
     <script>
-        // === HINDI CONSTANTS ===
+        // === CITY TRANSLATION MAP ===
+        const CITY_HI = {
+            "Mumbai": "मुंबई",
+            "Delhi": "दिल्ली",
+            "New Delhi": "नई दिल्ली",
+            "Bangalore": "बेंगलुरु",
+            "Bengaluru": "बेंगलुरु",
+            "Hyderabad": "हैदराबाद",
+            "Ahmedabad": "अहमदाबाद",
+            "Chennai": "चेन्नई",
+            "Kolkata": "कोलकाता",
+            "Surat": "सूरत",
+            "Pune": "पुणे",
+            "Jaipur": "जयपुर",
+            "Lucknow": "लखनऊ",
+            "Kanpur": "कानपुर",
+            "Nagpur": "नागपुर",
+            "Indore": "इंदौर",
+            "Thane": "ठाणे",
+            "Bhopal": "भोपाल",
+            "Visakhapatnam": "विशाखापत्तनम",
+            "Patna": "पटना",
+            "Vadodara": "वडोदरा",
+            "Ghaziabad": "गाजियाबाद",
+            "Ludhiana": "लुधियाना",
+            "Agra": "आगरा",
+            "Nashik": "नासिक",
+            "Faridabad": "फरीदाबाद",
+            "Meerut": "मेरठ",
+            "Rajkot": "राजकोट",
+            "Varanasi": "वाराणसी",
+            "Srinagar": "श्रीनगर",
+            "Aurangabad": "औरंगाबाद",
+            "Dhanbad": "धनबाद",
+            "Amritsar": "अमृतसर",
+            "Navi Mumbai": "नवी मुंबई",
+            "Allahabad": "प्रयागराज",
+            "Ranchi": "रांची",
+            "Howrah": "हावड़ा",
+            "Jabalpur": "जबलपुर",
+            "Gwalior": "ग्वालियर",
+            "Vijayawada": "विजयवाड़ा",
+            "Jodhpur": "जोधपुर"
+        };
+
         const DAYS_HI = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
         const MONTHS_HI = ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
         
-        // === WEATHER TRANSLATIONS ===
-        const WEATHER_MAP = { "Sunny": "खिली धूप", "Clear": "साफ़", "Partly cloudy": "आंशिक बादल", "Cloudy": "बादल", "Overcast": "घने बादल", "Mist": "कोहरा", "Rain": "बारिश", "Drizzle": "बूंदाबांदी", "Thunder": "तूफान", "Smoke": "धुआं", "Haze": "धुंध" };
+        // === IMPROVED WEATHER DICTIONARY ===
+        const WEATHER_MAP = { 
+            "Sunny": "खिली धूप", 
+            "Clear": "साफ़ आसमान", 
+            "Partly cloudy": "आंशिक बादल", 
+            "Cloudy": "बादल छाए रहेंगे", 
+            "Overcast": "घने बादल", 
+            "Mist": "हल्की धुंध", 
+            "Fog": "कोहरा",
+            "Freezing fog": "घना कोहरा",
+            "Rain": "बारिश", 
+            "Light rain": "हल्की बारिश", 
+            "Moderate rain": "मध्यम बारिश", 
+            "Heavy rain": "भारी बारिश", 
+            "Drizzle": "बूंदाबांदी", 
+            "Light drizzle": "हल्की बूंदाबांदी",
+            "Thunder": "तूफान", 
+            "Patchy rain possible": "बारिश के आसार", 
+            "Thundery outbreaks possible": "गरज के साथ बारिश",
+            "Smoke": "धुआं", 
+            "Haze": "धुंध" 
+        };
 
         function translate(text) {
-            for (let k in WEATHER_MAP) { if (text.includes(k)) return WEATHER_MAP[k]; }
-            return text;
+            if (!text) return "--";
+            let cleanText = text.trim();
+            // Direct Match
+            if (WEATHER_MAP[cleanText]) return WEATHER_MAP[cleanText];
+            // Partial Match
+            for (let k in WEATHER_MAP) { 
+                if (cleanText.includes(k)) return WEATHER_MAP[k]; 
+            }
+            return cleanText;
         }
 
         // === REAL INDIAN AQI CALCULATOR ===
-        // Maps Raw PM2.5 to Indian AQI Scale (Approximate)
         function calculateAQI(pm25) {
-            if (!pm25) return "--";
+            if (pm25 == null) return "--";
             let aqi = 0;
-            // Formula based on CPCB Breakpoints
             if (pm25 <= 30) aqi = pm25 * (50/30);
             else if (pm25 <= 60) aqi = 50 + (pm25-30) * (50/30);
             else if (pm25 <= 90) aqi = 100 + (pm25-60) * (100/30);
             else if (pm25 <= 120) aqi = 200 + (pm25-90) * (100/30);
             else if (pm25 <= 250) aqi = 300 + (pm25-120) * (100/130);
             else aqi = 400 + (pm25-250) * (100/130);
-            
             return Math.round(aqi);
         }
 
@@ -200,18 +271,26 @@
             const today = f[0];
             const now = new Date(loc.localtime);
 
-            // 1. Header
-            document.getElementById("city").innerText = loc.name;
+            // 1. Header (City Name Translation)
+            let cityDisplay = loc.name;
+            if (CITY_HI[loc.name]) {
+                cityDisplay = CITY_HI[loc.name];
+            }
+            document.getElementById("city").innerText = cityDisplay;
             document.getElementById("date").innerText = `${DAYS_HI[now.getDay()]}, ${now.getDate()} ${MONTHS_HI[now.getMonth()]}`;
             document.getElementById("tithi").innerText = getTithi(now);
 
             // 2. Hero
             document.getElementById("temp").innerText = Math.round(cur.temp_c) + "°";
             document.getElementById("cond").innerText = translate(cur.condition.text);
-            document.getElementById("summary").innerText = `अधिकतम ${Math.round(today.day.maxtemp_c)}° • न्यूनतम ${Math.round(today.day.mintemp_c)}° • बारिश ${today.day.daily_chance_of_rain}%`;
             
-            // AQI CALCULATION
-            // We use PM2.5 from API if available to show "Real" AQI
+            // Sentence Summary
+            const high = Math.round(today.day.maxtemp_c);
+            const low = Math.round(today.day.mintemp_c);
+            const rainChance = today.day.daily_chance_of_rain;
+            document.getElementById("summary").innerText = `आज अधिकतम तापमान ${high}° और न्यूनतम ${low}° रहेगा। बारिश की संभावना ${rainChance}% है।`;
+            
+            // Real AQI
             const pm25 = cur.air_quality ? cur.air_quality.pm2_5 : 0;
             const realAQI = calculateAQI(pm25);
             document.getElementById("aqi").innerText = `AQI ${realAQI}`;
