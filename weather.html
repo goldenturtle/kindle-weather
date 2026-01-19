@@ -2,140 +2,291 @@
 <html lang="hi">
 <head>
     <meta charset="utf-8">
-    <title>Kindle Weather Hindi</title>
+    <title>Kindle Weather Hindi Final</title>
     <style>
-        /* RESET */
+        /* RESET & BASICS */
         * { box-sizing: border-box; }
-        
-        /* BODY: PAPERWHITE RESOLUTION (758x1024) */
         body {
             margin: 0;
-            padding-top: 50px; /* Space for Top Bar */
-            padding-left: 15px;
-            padding-right: 15px;
+            padding: 0;
             background-color: white;
             color: black;
-            width: 758px;  /* EXACT WIDTH */
-            height: 1024px; /* EXACT HEIGHT */
+            width: 758px;  /* Paperwhite Width */
+            height: 1024px; /* Paperwhite Height */
             overflow: hidden;
             font-family: "Noto Sans Devanagari", "Lohit Devanagari", "Arial Unicode MS", sans-serif;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* HEADER */
-        .topbar { border-bottom: 4px solid black; padding-bottom: 8px; margin-bottom: 15px; overflow: hidden; }
-        .city { float: left; font-size: 38px; font-weight: 900; width: 70%; text-transform: uppercase; }
-        .clock { float: right; font-size: 28px; font-weight: 900; margin-top: 6px;}
+        /* 1. TOP BAR (Inverted Style) */
+        .header {
+            background-color: black;
+            color: white;
+            width: 100%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        .city { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        .date { font-size: 28px; font-weight: 900; }
 
-        /* MAIN DISPLAY */
-        .bigrow { margin-bottom: 15px; margin-top: 10px; overflow: hidden; display: flex; align-items: center;}
-        .tempblock { float: left; width: 45%; }
-        .temp { font-size: 130px; font-weight: 900; line-height: 0.9; letter-spacing: -3px; }
+        /* 2. HERO SECTION (Temp + Summary) */
+        .hero {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid black;
+            height: 220px;
+        }
+        .hero-left { width: 45%; }
+        .main-temp { font-size: 140px; font-weight: 900; line-height: 1; letter-spacing: -5px; }
         
-        .condblock { float: left; width: 55%; padding-left: 20px; }
-        .cond { font-size: 34px; font-weight: 900; display: block; margin-bottom: 8px; line-height: 1.1;}
-        .aqi { display: inline-block; border: 3px solid black; border-radius: 15px; padding: 4px 12px; font-weight: 900; font-size: 18px; }
-        .feels { display: block; margin-top: 8px; font-size: 20px; opacity: 0.8; font-weight: 900;}
+        .hero-right { width: 55%; padding-left: 10px; display: flex; flex-direction: column; justify-content: center; }
+        .main-cond { font-size: 36px; font-weight: 900; margin-bottom: 10px; line-height: 1.1; }
+        .summary { font-size: 22px; font-weight: 700; opacity: 0.8; line-height: 1.4; }
+        .aqi-badge { 
+            display: inline-block; 
+            background: black; 
+            color: white; 
+            padding: 4px 10px; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            font-weight: 900; 
+            width: fit-content;
+            margin-top: 10px;
+        }
 
-        /* CARDS ROW */
-        .cards { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .card { width: 32%; border: 3px solid black; border-radius: 12px; padding: 10px; height: 230px; }
-        .cardtitle { font-size: 25px; font-weight: 900; border-bottom: 3px solid black; padding-bottom: 6px; margin-bottom: 8px; }
-        
-        /* DATA TABLES */
-        table { width: 100%; border-collapse: collapse; }
-        td { padding: 3px 0; font-size: 25px; font-weight: 900;}
-        .k { text-align: left; opacity: 0.7; }
-        .v { text-align: right; }
+        /* 3. HOURLY STRIP (The "Empty Space" Filler) */
+        .hourly-title {
+            font-size: 18px; font-weight: 900; padding: 10px 20px 0; opacity: 0.6; text-transform: uppercase;
+        }
+        .hourly-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px 20px;
+            border-bottom: 2px solid black;
+        }
+        .hour-box {
+            width: 23%;
+            text-align: center;
+            background: #f0f0f0; /* Light gray for contrast */
+            padding: 10px 5px;
+            border-radius: 8px;
+        }
+        .h-time { font-size: 18px; font-weight: 900; margin-bottom: 5px; }
+        .h-temp { font-size: 32px; font-weight: 900; }
+        .h-cond { font-size: 16px; margin: 5px 0; font-weight: 700; height: 40px; overflow: hidden; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
+        .h-rain { font-size: 16px; font-weight: 900; color: #444; }
 
-        /* FORECAST */
-        .forecastCard { border: 3px solid black; border-radius: 12px; padding: 12px; }
-        .forecastTitle { font-size: 28px; font-weight: 900; border-bottom: 3px solid black; margin-bottom: 8px; padding-bottom: 8px;}
-        .forecastTable td { border-bottom: 1px solid #ccc; padding: 8px 0; font-size: 25px;}
+        /* 4. DETAILS GRID (2x2) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+            flex-grow: 1; /* Pushes content to fill space */
+        }
+        .detail-box {
+            border: 3px solid black;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .d-title { font-size: 18px; font-weight: 900; border-bottom: 2px solid black; padding-bottom: 5px; margin-bottom: 5px; }
+        .d-row { display: flex; justify-content: space-between; font-size: 20px; font-weight: 700; margin-bottom: 5px; }
+
+        /* 5. ASTRO STRIP (Bottom) */
+        .astro-strip {
+            background: black;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        /* 6. FORECAST (Bottom) */
+        .forecast-container {
+            padding: 15px 20px;
+        }
+        .f-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+            padding: 8px 0;
+            font-size: 24px;
+            font-weight: 700;
+            align-items: center;
+        }
+        .f-row:last-child { border-bottom: none; }
         
         /* FOOTER */
-        .footer { position: absolute; bottom: 5px; width: 100%; text-align: center; font-size: 14px; color: #555; }
+        .footer { text-align: center; padding: 5px; font-size: 14px; color: #666; }
+
     </style>
 </head>
 <body>
-    <div class="topbar">
-        <div class="city" id="city">LOADING...</div>
-        <div class="clock" id="clock">--:--</div>
+
+    <div class="header">
+        <div class="city" id="city">MUMBAI</div>
+        <div class="date" id="date">--</div>
     </div>
-    <div class="bigrow">
-        <div class="tempblock"><div class="temp" id="temp">--</div></div>
-        <div class="condblock">
-            <div class="cond" id="cond">--</div>
-            <div class="aqi" id="aqi">AQI --</div>
-            <div class="feels" id="feels">--</div>
+
+    <div class="hero">
+        <div class="hero-left">
+            <div class="main-temp" id="temp">--</div>
+        </div>
+        <div class="hero-right">
+            <div class="main-cond" id="cond">--</div>
+            <div class="summary" id="summary">डेटा लोड हो रहा है...</div>
+            <div class="aqi-badge" id="aqi">AQI --</div>
         </div>
     </div>
-    <div class="cards">
-        <div class="card">
-            <div class="cardtitle">ⓘ आज</div>
-            <table>
-                <tr><td class="k">आर्द्रता</td><td class="v" id="hum">--%</td></tr>
-                <tr><td class="k">बारिश</td><td class="v" id="rain">--mm</td></tr>
-                <tr><td class="k">UV</td><td class="v" id="uv">--</td></tr>
-                <tr><td class="k">दृश्यता</td><td class="v" id="vis">--km</td></tr>
-            </table>
+
+    <div class="hourly-title">अगले 12 घंटे</div>
+    <div class="hourly-container" id="hourlyStrip">
         </div>
-        <div class="card">
-            <div class="cardtitle">〰 हवा</div>
-            <table>
-                <tr><td class="k">गति</td><td class="v" id="wspd">--</td></tr>
-                <tr><td class="k">झोंके</td><td class="v" id="wgust">--</td></tr>
-                <tr><td class="k">दिशा</td><td class="v" id="wdeg">--</td></tr>
-                <tr><td class="k">सुई</td><td class="v" id="wdir">--</td></tr>
-            </table>
+
+    <div class="grid-container">
+        <div class="detail-box">
+            <div class="d-title">हवा और बारिश</div>
+            <div class="d-row"><span>हवा</span><span id="wind">--</span></div>
+            <div class="d-row"><span>झोंके</span><span id="gust">--</span></div>
+            <div class="d-row"><span>बारिश</span><span id="rain">--</span></div>
         </div>
-        <div class="card">
-            <div class="cardtitle">☼ सूर्य/चंद्र</div>
-            <table>
-                <tr><td class="k">उदय</td><td class="v" id="sunrise">--</td></tr>
-                <tr><td class="k">अस्त</td><td class="v" id="sunset">--</td></tr>
-                <tr><td class="k">चंद्र</td><td class="v" id="moonphase">--</td></tr>
-                <tr><td class="k">रोशनी</td><td class="v" id="moonillum">--</td></tr>
-            </table>
+        <div class="detail-box">
+            <div class="d-title">वातावरण</div>
+            <div class="d-row"><span>आर्द्रता</span><span id="hum">--</span></div>
+            <div class="d-row"><span>दृश्यता</span><span id="vis">--</span></div>
+            <div class="d-row"><span>UV</span><span id="uv">--</span></div>
         </div>
     </div>
-    <div class="forecastCard">
-        <div class="forecastTitle">📅 आगामी पूर्वानुमान</div>
-        <table class="forecastTable"><tbody id="forecastRows"></tbody></table>
+
+    <div class="forecast-container" id="forecastRows">
+        </div>
+
+    <div class="astro-strip">
+        <span id="sunrise">☀️ --</span>
+        <span id="sunset">🌑 --</span>
+        <span id="moon">🌙 --</span>
     </div>
+
     <div class="footer" id="footerMsg">Updated: --</div>
+
     <script>
-        function degToCompass(num) { var val=Math.floor((num/22.5)+0.5); var arr=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"]; return arr[(val%16)]; }
-        function renderWeather(j) {
-            if(!j||!j.current)return;
-            var cur=j.current, loc=j.location, f=j.forecast.forecastday, astro=f[0].astro;
-            document.getElementById("city").innerText=loc.name;
-            document.getElementById("clock").innerText=loc.localtime.split(" ")[1];
-            document.getElementById("temp").innerText=Math.round(cur.temp_c)+"°";
-            document.getElementById("cond").innerText=cur.condition.text;
-            document.getElementById("feels").innerText="महसूस: "+Math.round(cur.feelslike_c)+"°";
-            var aqiVal=(cur.air_quality&&cur.air_quality["us-epa-index"])||"1";
-            document.getElementById("aqi").innerText="AQI "+aqiVal;
-            document.getElementById("hum").innerText=cur.humidity+"%";
-            document.getElementById("rain").innerText=(cur.precip_mm||0)+"mm";
-            document.getElementById("uv").innerText=cur.uv;
-            document.getElementById("vis").innerText=cur.vis_km+"km";
-            document.getElementById("wspd").innerText=cur.wind_kph;
-            document.getElementById("wgust").innerText=cur.gust_kph;
-            document.getElementById("wdeg").innerText=cur.wind_degree+"°";
-            document.getElementById("wdir").innerText=degToCompass(cur.wind_degree);
-            document.getElementById("sunrise").innerText=astro.sunrise;
-            document.getElementById("sunset").innerText=astro.sunset;
-            document.getElementById("moonphase").innerText=astro.moon_phase;
-            document.getElementById("moonillum").innerText=astro.moon_illumination+"%";
-            var rows="", days=["रवि","सोम","मंगल","बुध","गुरु","शुक्र","शनि"];
-            for(var i=1;i<=2;i++){
-                var d=f[i], date=new Date(d.date), dayName=days[date.getDay()];
-                rows+=`<tr><td style="width:20%"><b>${dayName}</b></td><td style="width:25%">${Math.round(d.day.maxtemp_c)}° / ${Math.round(d.day.mintemp_c)}°</td><td>${d.day.condition.text}</td></tr>`;
-            }
-            document.getElementById("forecastRows").innerHTML=rows;
-            document.getElementById("footerMsg").innerText="Updated: "+loc.localtime;
+        // === HINDI HELPERS ===
+        const DAYS_HI = ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"];
+        const MONTHS_HI = ["जन", "फर", "मार्च", "अप्रेल", "मई", "जून", "जुलाई", "अगस्त", "सित", "अक्तू", "नव", "दिस"];
+
+        function formatDateHindi(dateStr) {
+            const d = new Date(dateStr);
+            return `${DAYS_HI[d.getDay()]}, ${d.getDate()} ${MONTHS_HI[d.getMonth()]}`;
         }
-        document.addEventListener("DOMContentLoaded",()=>{if(window.injectedData)renderWeather(window.injectedData);});
+
+        function render(data) {
+            if(!data || !data.current) return;
+            const cur = data.current;
+            const loc = data.location;
+            const f = data.forecast.forecastday;
+            const today = f[0];
+
+            // 1. Header
+            document.getElementById("city").innerText = loc.name;
+            // Use local time from API to set the correct date
+            document.getElementById("date").innerText = formatDateHindi(loc.localtime);
+
+            // 2. Hero
+            document.getElementById("temp").innerText = Math.round(cur.temp_c) + "°";
+            document.getElementById("cond").innerText = cur.condition.text;
+            
+            // Construct Summary Sentence: "High 32 / Low 24. Rain 10%"
+            const high = Math.round(today.day.maxtemp_c);
+            const low = Math.round(today.day.mintemp_c);
+            const rainChance = today.day.daily_chance_of_rain;
+            document.getElementById("summary").innerText = `अधिकतम ${high}° • न्यूनतम ${low}°\nबारिश की संभावना: ${rainChance}%`;
+            
+            const aqiVal = (cur.air_quality && cur.air_quality["us-epa-index"]) || "--";
+            document.getElementById("aqi").innerText = "AQI " + aqiVal;
+
+            // 3. Hourly Logic (Smart Rollover)
+            // We combine today's hours and tomorrow's hours into one long list
+            let allHours = [...today.hour, ...f[1].hour];
+            // Find current hour index based on API 'last_updated_epoch'
+            const currentEpoch = cur.last_updated_epoch;
+            let currentIndex = allHours.findIndex(h => h.time_epoch > currentEpoch);
+            if(currentIndex === -1) currentIndex = 0;
+
+            let hourlyHTML = "";
+            // Pick +3, +6, +9, +12 hours from now
+            [3, 6, 9, 12].forEach(offset => {
+                const h = allHours[currentIndex + offset];
+                if(h) {
+                    const dateObj = new Date(h.time);
+                    // Format time: 2 PM or 14:00
+                    let hrs = dateObj.getHours();
+                    const ampm = hrs >= 12 ? 'PM' : 'AM';
+                    hrs = hrs % 12; 
+                    hrs = hrs ? hrs : 12; // the hour '0' should be '12'
+                    
+                    hourlyHTML += `
+                    <div class="hour-box">
+                        <div class="h-time">${hrs} ${ampm}</div>
+                        <div class="h-temp">${Math.round(h.temp_c)}°</div>
+                        <div class="h-cond">${h.condition.text}</div>
+                        <div class="h-rain">💧 ${h.chance_of_rain}%</div>
+                    </div>`;
+                }
+            });
+            document.getElementById("hourlyStrip").innerHTML = hourlyHTML;
+
+            // 4. Details
+            document.getElementById("wind").innerText = cur.wind_kph + " km";
+            document.getElementById("gust").innerText = cur.gust_kph + " km";
+            document.getElementById("rain").innerText = (cur.precip_mm || 0) + " mm";
+            document.getElementById("hum").innerText = cur.humidity + "%";
+            document.getElementById("vis").innerText = cur.vis_km + " km";
+            document.getElementById("uv").innerText = cur.uv;
+
+            // 5. Forecast List
+            let forecastHTML = "";
+            // Show Tomorrow and Day After
+            for(let i=1; i<=2; i++) {
+                const day = f[i];
+                const dName = DAYS_HI[new Date(day.date).getDay()];
+                forecastHTML += `
+                <div class="f-row">
+                    <div style="width:20%">${dName}</div>
+                    <div style="width:40%">${day.day.condition.text}</div>
+                    <div style="width:40%; text-align:right;">
+                        ⬆${Math.round(day.day.maxtemp_c)}° ⬇${Math.round(day.day.mintemp_c)}°
+                    </div>
+                </div>`;
+            }
+            document.getElementById("forecastRows").innerHTML = forecastHTML;
+
+            // 6. Astro Strip
+            document.getElementById("sunrise").innerText = "उदय " + today.astro.sunrise;
+            document.getElementById("sunset").innerText = "अस्त " + today.astro.sunset;
+            document.getElementById("moon").innerText = today.astro.moon_phase; // Usually comes in English, can map if needed
+
+            document.getElementById("footerMsg").innerText = "Updated: " + loc.localtime.split(" ")[1];
+        }
+
+        // Init
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.injectedData) {
+                render(window.injectedData);
+            } else {
+                // Debug mode for PC testing
+                document.getElementById("summary").innerText = "Waiting for data...";
+            }
+        });
     </script>
 </body>
 </html>
