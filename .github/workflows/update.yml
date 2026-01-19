@@ -15,22 +15,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Download and Resize Image
+      - name: Download and Polish Image
         run: |
           sudo apt-get update
           sudo apt-get install -y imagemagick
 
-          # 1. Download the raw weather image
+          # 1. Download Raw Image
           curl "https://wttr.in/Mumbai.png?0Q" --output weather-orig.png
 
-          # 2. IMAGE MAGIC:
-          # -resize 180%   -> Makes the text bigger (Zoom In)
-          # -background white -> Adds white background
-          # -gravity center -> Centers the image
-          # -extent 600x800 -> Forces the final image to be exact Kindle size
-          # -colorspace Gray -> Ensures no "Black Bar" error
+          # 2. THE MAGICAL TRANSFORMATION
+          # -negate: Swaps Black background to White (Kindle style)
+          # -resize 300%: Makes text big and readable
+          # -gravity center: Puts it in the middle
+          # -background white: Fills the empty space with white
+          # -extent 600x800: Forces the image to cover the ENTIRE screen (hides KUAL)
           
-          convert weather-orig.png -resize 180% -background white -gravity center -extent 600x800 -colorspace Gray -depth 8 -type Grayscale weather-gray.png
+          convert weather-orig.png -negate -resize 300% -gravity center -background white -extent 600x800 -colorspace Gray -depth 8 -type Grayscale weather-gray.png
 
       - name: Save Image to GitHub
         run: |
