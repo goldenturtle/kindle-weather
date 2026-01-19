@@ -37,97 +37,103 @@
         .hero {
             display: flex;
             align-items: center;
-            padding: 20px;
+            padding: 10px 20px; /* Reduced vertical padding */
             border-bottom: 2px solid black;
-            height: 220px;
+            height: 210px;
         }
         .hero-left { width: 45%; }
         .main-temp { font-size: 140px; font-weight: 900; line-height: 1; letter-spacing: -5px; }
         
         .hero-right { width: 55%; padding-left: 10px; display: flex; flex-direction: column; justify-content: center; }
-        .main-cond { font-size: 36px; font-weight: 900; margin-bottom: 10px; line-height: 1.1; }
-        .summary { font-size: 22px; font-weight: 700; opacity: 0.8; line-height: 1.4; }
+        .main-cond { font-size: 38px; font-weight: 900; margin-bottom: 10px; line-height: 1.1; }
+        .summary { font-size: 24px; font-weight: 700; opacity: 0.8; line-height: 1.4; }
         .aqi-badge { 
             display: inline-block; 
             background: black; 
             color: white; 
             padding: 4px 10px; 
             border-radius: 4px; 
-            font-size: 16px; 
+            font-size: 18px; 
             font-weight: 900; 
             width: fit-content;
             margin-top: 10px;
         }
 
-        /* 3. HOURLY STRIP (The "Empty Space" Filler) */
+        /* 3. HOURLY STRIP (Bigger Fonts) */
         .hourly-title {
-            font-size: 18px; font-weight: 900; padding: 10px 20px 0; opacity: 0.6; text-transform: uppercase;
+            font-size: 22px; font-weight: 900; padding: 10px 20px 0; opacity: 0.7; text-transform: uppercase;
         }
         .hourly-container {
             display: flex;
             justify-content: space-between;
             padding: 10px 20px 20px;
-            border-bottom: 2px solid black;
+            border-bottom: 3px solid black;
         }
         .hour-box {
             width: 23%;
             text-align: center;
-            background: #f0f0f0; /* Light gray for contrast */
+            background: #f0f0f0;
             padding: 10px 5px;
             border-radius: 8px;
         }
-        .h-time { font-size: 18px; font-weight: 900; margin-bottom: 5px; }
-        .h-temp { font-size: 32px; font-weight: 900; }
-        .h-cond { font-size: 16px; margin: 5px 0; font-weight: 700; height: 40px; overflow: hidden; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
-        .h-rain { font-size: 16px; font-weight: 900; color: #444; }
+        /* Increased Sizes here */
+        .h-time { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
+        .h-temp { font-size: 42px; font-weight: 900; line-height: 1.1; }
+        .h-cond { font-size: 22px; margin: 5px 0; font-weight: 700; height: 50px; overflow: hidden; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
+        .h-rain { font-size: 20px; font-weight: 900; color: #444; }
 
-        /* 4. DETAILS GRID (2x2) */
+        /* 4. DETAILS GRID (Compact Padding, Big Text) */
         .grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            padding: 20px;
-            flex-grow: 1; /* Pushes content to fill space */
+            padding: 15px 20px; /* Reduced outer padding */
+            flex-grow: 1; 
         }
         .detail-box {
             border: 3px solid black;
             border-radius: 12px;
-            padding: 15px;
+            padding: 8px 15px; /* Tighter internal padding */
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: space-evenly;
         }
-        .d-title { font-size: 18px; font-weight: 900; border-bottom: 2px solid black; padding-bottom: 5px; margin-bottom: 5px; }
-        .d-row { display: flex; justify-content: space-between; font-size: 20px; font-weight: 700; margin-bottom: 5px; }
+        .d-title { font-size: 22px; font-weight: 900; border-bottom: 2px solid black; padding-bottom: 5px; margin-bottom: 5px; }
+        /* Increased Row Font */
+        .d-row { display: flex; justify-content: space-between; font-size: 26px; font-weight: 700; margin-bottom: 2px; }
 
-        /* 5. ASTRO STRIP (Bottom) */
-        .astro-strip {
-            background: black;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 18px;
-            font-weight: 900;
-        }
-
-        /* 6. FORECAST (Bottom) */
+        /* 5. FORECAST (Bottom) */
         .forecast-container {
-            padding: 15px 20px;
+            padding: 10px 20px;
+            border-top: 2px solid black;
         }
         .f-row {
             display: flex;
             justify-content: space-between;
             border-bottom: 1px solid #ccc;
-            padding: 8px 0;
-            font-size: 24px;
+            padding: 6px 0;
+            font-size: 26px; /* Bigger Forecast Font */
             font-weight: 700;
             align-items: center;
         }
         .f-row:last-child { border-bottom: none; }
         
+        /* 6. ASTRO STRIP (New Layout) */
+        .astro-strip {
+            background: black;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px; /* Bigger Astro Font */
+            font-weight: 900;
+            align-items: center;
+        }
+        .astro-group { display: flex; align-items: center; gap: 15px; }
+        .astro-icon { font-size: 30px; margin-right: 5px; }
+
         /* FOOTER */
-        .footer { text-align: center; padding: 5px; font-size: 14px; color: #666; }
+        .footer { text-align: center; padding: 5px; font-size: 14px; color: #666; background: #eee;}
 
     </style>
 </head>
@@ -144,7 +150,7 @@
         </div>
         <div class="hero-right">
             <div class="main-cond" id="cond">--</div>
-            <div class="summary" id="summary">डेटा लोड हो रहा है...</div>
+            <div class="summary" id="summary">...</div>
             <div class="aqi-badge" id="aqi">AQI --</div>
         </div>
     </div>
@@ -168,21 +174,25 @@
         </div>
     </div>
 
-    <div class="forecast-container" id="forecastRows">
-        </div>
+    <div class="forecast-container" id="forecastRows"></div>
 
     <div class="astro-strip">
-        <span id="sunrise">☀️ --</span>
-        <span id="sunset">🌑 --</span>
-        <span id="moon">🌙 --</span>
+        <div class="astro-group">
+            <span class="astro-icon">☀️</span>
+            <span id="sun-times">--</span>
+        </div>
+        <div class="astro-group">
+            <span class="astro-icon">🌙</span>
+            <span id="moon-times">--</span>
+        </div>
     </div>
 
     <div class="footer" id="footerMsg">Updated: --</div>
 
     <script>
-        // === HINDI HELPERS ===
-        const DAYS_HI = ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"];
-        const MONTHS_HI = ["जन", "फर", "मार्च", "अप्रेल", "मई", "जून", "जुलाई", "अगस्त", "सित", "अक्तू", "नव", "दिस"];
+        // === UPDATED HINDI FULL NAMES ===
+        const DAYS_HI = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
+        const MONTHS_HI = ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
 
         function formatDateHindi(dateStr) {
             const d = new Date(dateStr);
@@ -198,14 +208,12 @@
 
             // 1. Header
             document.getElementById("city").innerText = loc.name;
-            // Use local time from API to set the correct date
             document.getElementById("date").innerText = formatDateHindi(loc.localtime);
 
             // 2. Hero
             document.getElementById("temp").innerText = Math.round(cur.temp_c) + "°";
             document.getElementById("cond").innerText = cur.condition.text;
             
-            // Construct Summary Sentence: "High 32 / Low 24. Rain 10%"
             const high = Math.round(today.day.maxtemp_c);
             const low = Math.round(today.day.mintemp_c);
             const rainChance = today.day.daily_chance_of_rain;
@@ -214,25 +222,22 @@
             const aqiVal = (cur.air_quality && cur.air_quality["us-epa-index"]) || "--";
             document.getElementById("aqi").innerText = "AQI " + aqiVal;
 
-            // 3. Hourly Logic (Smart Rollover)
-            // We combine today's hours and tomorrow's hours into one long list
+            // 3. Hourly Logic
             let allHours = [...today.hour, ...f[1].hour];
-            // Find current hour index based on API 'last_updated_epoch'
             const currentEpoch = cur.last_updated_epoch;
             let currentIndex = allHours.findIndex(h => h.time_epoch > currentEpoch);
             if(currentIndex === -1) currentIndex = 0;
 
             let hourlyHTML = "";
-            // Pick +3, +6, +9, +12 hours from now
+            // Increased spacing: +3, +6, +9, +12 hours
             [3, 6, 9, 12].forEach(offset => {
                 const h = allHours[currentIndex + offset];
                 if(h) {
                     const dateObj = new Date(h.time);
-                    // Format time: 2 PM or 14:00
                     let hrs = dateObj.getHours();
                     const ampm = hrs >= 12 ? 'PM' : 'AM';
                     hrs = hrs % 12; 
-                    hrs = hrs ? hrs : 12; // the hour '0' should be '12'
+                    hrs = hrs ? hrs : 12;
                     
                     hourlyHTML += `
                     <div class="hour-box">
@@ -245,7 +250,7 @@
             });
             document.getElementById("hourlyStrip").innerHTML = hourlyHTML;
 
-            // 4. Details
+            // 4. Details (Added Units)
             document.getElementById("wind").innerText = cur.wind_kph + " km";
             document.getElementById("gust").innerText = cur.gust_kph + " km";
             document.getElementById("rain").innerText = (cur.precip_mm || 0) + " mm";
@@ -255,14 +260,13 @@
 
             // 5. Forecast List
             let forecastHTML = "";
-            // Show Tomorrow and Day After
             for(let i=1; i<=2; i++) {
                 const day = f[i];
                 const dName = DAYS_HI[new Date(day.date).getDay()];
                 forecastHTML += `
                 <div class="f-row">
-                    <div style="width:20%">${dName}</div>
-                    <div style="width:40%">${day.day.condition.text}</div>
+                    <div style="width:25%">${dName}</div>
+                    <div style="width:35%">${day.day.condition.text}</div>
                     <div style="width:40%; text-align:right;">
                         ⬆${Math.round(day.day.maxtemp_c)}° ⬇${Math.round(day.day.mintemp_c)}°
                     </div>
@@ -270,10 +274,9 @@
             }
             document.getElementById("forecastRows").innerHTML = forecastHTML;
 
-            // 6. Astro Strip
-            document.getElementById("sunrise").innerText = "उदय " + today.astro.sunrise;
-            document.getElementById("sunset").innerText = "अस्त " + today.astro.sunset;
-            document.getElementById("moon").innerText = today.astro.moon_phase; // Usually comes in English, can map if needed
+            // 6. Astro Strip (Rise & Set for Both)
+            document.getElementById("sun-times").innerText = `${today.astro.sunrise} - ${today.astro.sunset}`;
+            document.getElementById("moon-times").innerText = `${today.astro.moonrise} - ${today.astro.moonset}`;
 
             document.getElementById("footerMsg").innerText = "Updated: " + loc.localtime.split(" ")[1];
         }
@@ -282,9 +285,6 @@
         document.addEventListener("DOMContentLoaded", () => {
             if (window.injectedData) {
                 render(window.injectedData);
-            } else {
-                // Debug mode for PC testing
-                document.getElementById("summary").innerText = "Waiting for data...";
             }
         });
     </script>
