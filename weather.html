@@ -24,20 +24,23 @@
             background-color: black;
             color: white;
             width: 100%;
-            height: 70px;
+            height: 80px; /* Taller for Tithi */
             display: flex;
+            flex-direction: column; /* Stack Date & Tithi */
             align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
+            justify-content: center;
+            padding: 5px 20px;
         }
+        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; }
         .city { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
         .date { font-size: 28px; font-weight: 900; }
+        .tithi-row { font-size: 18px; font-weight: 700; color: #ddd; margin-top: 2px; width: 100%; text-align: right; }
 
         /* 2. HERO SECTION (Temp + Summary) */
         .hero {
             display: flex;
             align-items: center;
-            padding: 10px 20px; /* Reduced vertical padding */
+            padding: 10px 20px;
             border-bottom: 2px solid black;
             height: 210px;
         }
@@ -59,7 +62,7 @@
             margin-top: 10px;
         }
 
-        /* 3. HOURLY STRIP (Bigger Fonts) */
+        /* 3. HOURLY STRIP */
         .hourly-title {
             font-size: 22px; font-weight: 900; padding: 10px 20px 0; opacity: 0.7; text-transform: uppercase;
         }
@@ -76,33 +79,31 @@
             padding: 10px 5px;
             border-radius: 8px;
         }
-        /* Increased Sizes here */
         .h-time { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
         .h-temp { font-size: 42px; font-weight: 900; line-height: 1.1; }
         .h-cond { font-size: 22px; margin: 5px 0; font-weight: 700; height: 50px; overflow: hidden; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
         .h-rain { font-size: 20px; font-weight: 900; color: #444; }
 
-        /* 4. DETAILS GRID (Compact Padding, Big Text) */
+        /* 4. DETAILS GRID */
         .grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            padding: 15px 20px; /* Reduced outer padding */
+            padding: 15px 20px; 
             flex-grow: 1; 
         }
         .detail-box {
             border: 3px solid black;
             border-radius: 12px;
-            padding: 8px 15px; /* Tighter internal padding */
+            padding: 8px 15px;
             display: flex;
             flex-direction: column;
             justify-content: space-evenly;
         }
         .d-title { font-size: 22px; font-weight: 900; border-bottom: 2px solid black; padding-bottom: 5px; margin-bottom: 5px; }
-        /* Increased Row Font */
         .d-row { display: flex; justify-content: space-between; font-size: 26px; font-weight: 700; margin-bottom: 2px; }
 
-        /* 5. FORECAST (Bottom) */
+        /* 5. FORECAST */
         .forecast-container {
             padding: 10px 20px;
             border-top: 2px solid black;
@@ -112,20 +113,20 @@
             justify-content: space-between;
             border-bottom: 1px solid #ccc;
             padding: 6px 0;
-            font-size: 26px; /* Bigger Forecast Font */
+            font-size: 26px;
             font-weight: 700;
             align-items: center;
         }
         .f-row:last-child { border-bottom: none; }
         
-        /* 6. ASTRO STRIP (New Layout) */
+        /* 6. ASTRO STRIP */
         .astro-strip {
             background: black;
             color: white;
             padding: 12px 20px;
             display: flex;
             justify-content: space-between;
-            font-size: 24px; /* Bigger Astro Font */
+            font-size: 24px;
             font-weight: 900;
             align-items: center;
         }
@@ -140,8 +141,11 @@
 <body>
 
     <div class="header">
-        <div class="city" id="city">MUMBAI</div>
-        <div class="date" id="date">--</div>
+        <div class="header-top">
+            <div class="city" id="city">MUMBAI</div>
+            <div class="date" id="date">--</div>
+        </div>
+        <div class="tithi-row" id="tithi">चंद्र तिथि लोड हो रही है...</div>
     </div>
 
     <div class="hero">
@@ -190,13 +194,119 @@
     <div class="footer" id="footerMsg">Updated: --</div>
 
     <script>
-        // === UPDATED HINDI FULL NAMES ===
+        // === HINDI CONSTANTS ===
         const DAYS_HI = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
         const MONTHS_HI = ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
+
+        // === WEATHER CONDITION TRANSLATIONS (English -> Hindi) ===
+        const WEATHER_MAP = {
+            "Sunny": "धूप",
+            "Clear": "साफ़",
+            "Partly cloudy": "आंशिक बादल",
+            "Cloudy": "बादल",
+            "Overcast": "घने बादल",
+            "Mist": "कोहरा",
+            "Patchy rain possible": "हल्की बारिश संभव",
+            "Patchy snow possible": "हल्की बर्फबारी संभव",
+            "Patchy sleet possible": "ओले संभव",
+            "Patchy freezing drizzle possible": "बर्फीली बूंदाबांदी संभव",
+            "Thundery outbreaks possible": "तूफान संभव",
+            "Blowing snow": "बर्फबारी",
+            "Blizzard": "बर्फीला तूफान",
+            "Fog": "कोहरा",
+            "Freezing fog": "जमा देने वाला कोहरा",
+            "Patchy light drizzle": "हल्की बूंदाबांदी",
+            "Light drizzle": "बूंदाबांदी",
+            "Freezing drizzle": "बर्फीली बूंदाबांदी",
+            "Heavy freezing drizzle": "भारी बर्फीली बूंदाबांदी",
+            "Patchy light rain": "हल्की बारिश",
+            "Light rain": "हल्की बारिश",
+            "Moderate rain at times": "मध्यम बारिश",
+            "Moderate rain": "मध्यम बारिश",
+            "Heavy rain at times": "भारी बारिश",
+            "Heavy rain": "भारी बारिश",
+            "Light freezing rain": "हल्की बर्फीली बारिश",
+            "Moderate or heavy freezing rain": "भारी बर्फीली बारिश",
+            "Light sleet": "हल्की ओलावृष्टि",
+            "Moderate or heavy sleet": "भारी ओलावृष्टि",
+            "Patchy light snow": "हल्की बर्फबारी",
+            "Light snow": "हल्की बर्फबारी",
+            "Patchy moderate snow": "मध्यम बर्फबारी",
+            "Moderate snow": "मध्यम बर्फबारी",
+            "Patchy heavy snow": "भारी बर्फबारी",
+            "Heavy snow": "भारी बर्फबारी",
+            "Ice pellets": "बर्फ के गोले",
+            "Light rain shower": "हल्की बौछारें",
+            "Moderate or heavy rain shower": "भारी बौछारें",
+            "Torrential rain shower": "मूसलाधार बारिश",
+            "Light sleet showers": "ओले की बौछारें",
+            "Moderate or heavy sleet showers": "भारी ओले",
+            "Light snow showers": "बर्फ की बौछारें",
+            "Moderate or heavy snow showers": "भारी बर्फबारी",
+            "Light showers of ice pellets": "बर्फ के गोलों की बौछार",
+            "Moderate or heavy showers of ice pellets": "भारी बर्फ के गोले",
+            "Patchy light rain with thunder": "गरज के साथ बारिश",
+            "Moderate or heavy rain with thunder": "गरज-चमक के साथ बारिश",
+            "Patchy light snow with thunder": "गरज के साथ बर्फ",
+            "Moderate or heavy snow with thunder": "गरज-चमक के साथ बर्फ",
+            "Smoke": "धुआं",
+            "Haze": "धुंध",
+            "Dust": "धूल",
+            "Sand": "रेत",
+            "Ash": "राख",
+            "Squall": "आंधी",
+            "Tornado": "बवंडर"
+        };
+
+        // Helper to translate weather text
+        function translateWeather(text) {
+            if (!text) return "";
+            return WEATHER_MAP[text.trim()] || text; // Returns original English if no translation found
+        }
 
         function formatDateHindi(dateStr) {
             const d = new Date(dateStr);
             return `${DAYS_HI[d.getDay()]}, ${d.getDate()} ${MONTHS_HI[d.getMonth()]}`;
+        }
+
+        // === TITHI CALCULATION (Simplified Logic) ===
+        // This calculates the approximate Tithi based on Moon Phase age (0-29.5 days)
+        function getTithi(dateStr) {
+            const date = new Date(dateStr);
+            const knownNewMoon = new Date('2000-01-06T18:14:00Z'); // Reference New Moon
+            const lunation = 29.53058867; // Length of lunar month in days
+            
+            const diffTime = date.getTime() - knownNewMoon.getTime();
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            const moonAge = diffDays % lunation;
+            
+            // Each Tithi is 12 degrees or approx 0.98 days
+            // There are 30 Tithis in a lunar month (15 Shukla + 15 Krishna)
+            const tithiIndex = Math.floor((moonAge / lunation) * 30) + 1;
+            
+            let paksha = "";
+            let tithiName = "";
+            let icon = "";
+
+            const tithiNames = [
+                "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", 
+                "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", 
+                "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा/अमावस्या"
+            ];
+
+            if (tithiIndex <= 15) {
+                paksha = "शुक्ल पक्ष";
+                tithiName = tithiNames[tithiIndex - 1];
+                icon = "🌕"; // Waxing
+                if (tithiIndex === 15) tithiName = "पूर्णिमा";
+            } else {
+                paksha = "कृष्ण पक्ष";
+                tithiName = tithiNames[(tithiIndex - 16)];
+                icon = "🌑"; // Waning
+                if (tithiIndex === 30 || tithiIndex === 0) tithiName = "अमावस्या";
+            }
+
+            return `${icon} ${paksha} ${tithiName}`;
         }
 
         function render(data) {
@@ -209,14 +319,19 @@
             // 1. Header
             document.getElementById("city").innerText = loc.name;
             document.getElementById("date").innerText = formatDateHindi(loc.localtime);
+            
+            // Calculate and display Tithi
+            document.getElementById("tithi").innerText = getTithi(loc.localtime);
 
             // 2. Hero
             document.getElementById("temp").innerText = Math.round(cur.temp_c) + "°";
-            document.getElementById("cond").innerText = cur.condition.text;
+            document.getElementById("cond").innerText = translateWeather(cur.condition.text);
             
             const high = Math.round(today.day.maxtemp_c);
             const low = Math.round(today.day.mintemp_c);
             const rainChance = today.day.daily_chance_of_rain;
+            
+            // Translate summary manually
             document.getElementById("summary").innerText = `अधिकतम ${high}° • न्यूनतम ${low}°\nबारिश की संभावना: ${rainChance}%`;
             
             const aqiVal = (cur.air_quality && cur.air_quality["us-epa-index"]) || "--";
@@ -229,7 +344,6 @@
             if(currentIndex === -1) currentIndex = 0;
 
             let hourlyHTML = "";
-            // Increased spacing: +3, +6, +9, +12 hours
             [3, 6, 9, 12].forEach(offset => {
                 const h = allHours[currentIndex + offset];
                 if(h) {
@@ -243,14 +357,14 @@
                     <div class="hour-box">
                         <div class="h-time">${hrs} ${ampm}</div>
                         <div class="h-temp">${Math.round(h.temp_c)}°</div>
-                        <div class="h-cond">${h.condition.text}</div>
+                        <div class="h-cond">${translateWeather(h.condition.text)}</div>
                         <div class="h-rain">💧 ${h.chance_of_rain}%</div>
                     </div>`;
                 }
             });
             document.getElementById("hourlyStrip").innerHTML = hourlyHTML;
 
-            // 4. Details (Added Units)
+            // 4. Details
             document.getElementById("wind").innerText = cur.wind_kph + " km";
             document.getElementById("gust").innerText = cur.gust_kph + " km";
             document.getElementById("rain").innerText = (cur.precip_mm || 0) + " mm";
@@ -266,7 +380,7 @@
                 forecastHTML += `
                 <div class="f-row">
                     <div style="width:25%">${dName}</div>
-                    <div style="width:35%">${day.day.condition.text}</div>
+                    <div style="width:35%">${translateWeather(day.day.condition.text)}</div>
                     <div style="width:40%; text-align:right;">
                         ⬆${Math.round(day.day.maxtemp_c)}° ⬇${Math.round(day.day.mintemp_c)}°
                     </div>
@@ -274,7 +388,7 @@
             }
             document.getElementById("forecastRows").innerHTML = forecastHTML;
 
-            // 6. Astro Strip (Rise & Set for Both)
+            // 6. Astro Strip
             document.getElementById("sun-times").innerText = `${today.astro.sunrise} - ${today.astro.sunset}`;
             document.getElementById("moon-times").innerText = `${today.astro.moonrise} - ${today.astro.moonset}`;
 
