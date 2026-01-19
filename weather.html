@@ -43,7 +43,7 @@
         .hero-right { width: 58%; padding-left: 20px; display: flex; flex-direction: column; justify-content: center; }
         .main-cond { font-size: 44px; font-weight: 900; margin-bottom: 12px; line-height: 1.1; }
         
-        /* New Summary Style */
+        /* Summary Style */
         .summary { font-size: 24px; font-weight: 700; opacity: 0.9; line-height: 1.4; margin-bottom: 15px; }
         
         .aqi-box { 
@@ -160,54 +160,28 @@
     <script>
         // === CITY TRANSLATION MAP ===
         const CITY_HI = {
-            "Mumbai": "मुंबई",
-            "Delhi": "दिल्ली",
-            "New Delhi": "नई दिल्ली",
-            "Bangalore": "बेंगलुरु",
-            "Bengaluru": "बेंगलुरु",
-            "Hyderabad": "हैदराबाद",
-            "Ahmedabad": "अहमदाबाद",
-            "Chennai": "चेन्नई",
-            "Kolkata": "कोलकाता",
-            "Surat": "सूरत",
-            "Pune": "पुणे",
-            "Jaipur": "जयपुर",
-            "Lucknow": "लखनऊ",
-            "Kanpur": "कानपुर",
-            "Nagpur": "नागपुर",
-            "Indore": "इंदौर",
-            "Thane": "ठाणे",
-            "Bhopal": "भोपाल",
-            "Visakhapatnam": "विशाखापत्तनम",
-            "Patna": "पटना",
-            "Vadodara": "वडोदरा",
-            "Ghaziabad": "गाजियाबाद",
-            "Ludhiana": "लुधियाना",
-            "Agra": "आगरा",
-            "Nashik": "नासिक",
-            "Faridabad": "फरीदाबाद",
-            "Meerut": "मेरठ",
-            "Rajkot": "राजकोट",
-            "Varanasi": "वाराणसी",
-            "Srinagar": "श्रीनगर",
-            "Aurangabad": "औरंगाबाद",
-            "Dhanbad": "धनबाद",
-            "Amritsar": "अमृतसर",
-            "Navi Mumbai": "नवी मुंबई",
-            "Allahabad": "प्रयागराज",
-            "Ranchi": "रांची",
-            "Howrah": "हावड़ा",
-            "Jabalpur": "जबलपुर",
-            "Gwalior": "ग्वालियर",
-            "Vijayawada": "विजयवाड़ा",
-            "Jodhpur": "जोधपुर"
+            "Mumbai": "मुंबई", "Delhi": "दिल्ली", "New Delhi": "नई दिल्ली", "Bangalore": "बेंगलुरु", "Bengaluru": "बेंगलुरु",
+            "Hyderabad": "हैदराबाद", "Ahmedabad": "अहमदाबाद", "Chennai": "चेन्नई", "Kolkata": "कोलकाता", "Surat": "सूरत",
+            "Pune": "पुणे", "Jaipur": "जयपुर", "Lucknow": "लखनऊ", "Kanpur": "कानपुर", "Nagpur": "नागपुर", "Indore": "इंदौर",
+            "Thane": "ठाणे", "Bhopal": "भोपाल", "Visakhapatnam": "विशाखापत्तनम", "Patna": "पटना", "Vadodara": "वडोदरा",
+            "Ghaziabad": "गाजियाबाद", "Ludhiana": "लुधियाना", "Agra": "आगरा", "Nashik": "नासिक", "Faridabad": "फरीदाबाद",
+            "Meerut": "मेरठ", "Rajkot": "राजकोट", "Varanasi": "वाराणसी", "Srinagar": "श्रीनगर", "Aurangabad": "औरंगाबाद",
+            "Dhanbad": "धनबाद", "Amritsar": "अमृतसर", "Navi Mumbai": "नवी मुंबई", "Allahabad": "प्रयागराज", "Ranchi": "रांची",
+            "Howrah": "हावड़ा", "Jabalpur": "जबलपुर", "Gwalior": "ग्वालियर", "Vijayawada": "विजयवाड़ा", "Jodhpur": "जोधपुर"
         };
 
         const DAYS_HI = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
         const MONTHS_HI = ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
         
-        // === IMPROVED WEATHER DICTIONARY ===
+        // === FIXED WEATHER MAP (API Overrides) ===
         const WEATHER_MAP = { 
+            // Fix Bad Hindi from API
+            "धूप वाला": "खिली धूप",
+            "साफ": "साफ़ आसमान",
+            "बादल": "बादल छाए रहेंगे",
+            "आंशिक रूप से बादल": "आंशिक बादल",
+            
+            // English Fallbacks
             "Sunny": "खिली धूप", 
             "Clear": "साफ़ आसमान", 
             "Partly cloudy": "आंशिक बादल", 
@@ -232,7 +206,7 @@
         function translate(text) {
             if (!text) return "--";
             let cleanText = text.trim();
-            // Direct Match
+            // Direct Match (Highest Priority)
             if (WEATHER_MAP[cleanText]) return WEATHER_MAP[cleanText];
             // Partial Match
             for (let k in WEATHER_MAP) { 
