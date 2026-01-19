@@ -10,55 +10,55 @@
         /* BODY: PAPERWHITE RESOLUTION (758x1024) */
         body {
             margin: 0;
-            padding-top: 60px; /* Safe zone for top bar */
-            padding-left: 20px;
-            padding-right: 20px;
+            padding-top: 50px; /* Space for Top Bar */
+            padding-left: 15px;
+            padding-right: 15px;
             background-color: white;
             color: black;
-            width: 758px;  /* PAPERWHITE WIDTH */
-            height: 1024px; /* PAPERWHITE HEIGHT */
+            width: 758px;  /* EXACT WIDTH */
+            height: 1024px; /* EXACT HEIGHT */
             overflow: hidden;
             font-family: "Noto Sans Devanagari", "Lohit Devanagari", "Arial Unicode MS", sans-serif;
         }
 
         /* HEADER */
-        .topbar { border-bottom: 5px solid black; padding-bottom: 10px; margin-bottom: 20px; overflow: hidden; }
-        .city { float: left; font-size: 40px; font-weight: bold; width: 70%; }
-        .clock { float: right; font-size: 30px; font-weight: bold; margin-top: 8px;}
+        .topbar { border-bottom: 4px solid black; padding-bottom: 8px; margin-bottom: 15px; overflow: hidden; }
+        .city { float: left; font-size: 38px; font-weight: 900; width: 70%; text-transform: uppercase; }
+        .clock { float: right; font-size: 28px; font-weight: 900; margin-top: 6px;}
 
         /* MAIN DISPLAY */
-        .bigrow { margin-bottom: 20px; overflow: hidden; display: flex; align-items: center;}
+        .bigrow { margin-bottom: 15px; overflow: hidden; display: flex; align-items: center;}
         .tempblock { float: left; width: 45%; }
-        .temp { font-size: 130px; font-weight: bold; line-height: 1; letter-spacing: -5px; }
+        .temp { font-size: 130px; font-weight: 900; line-height: 0.9; letter-spacing: -3px; }
         
-        .condblock { float: left; width: 55%; padding-left: 15px; }
-        .cond { font-size: 38px; font-weight: bold; display: block; margin-bottom: 10px; line-height: 1.1;}
-        .aqi { display: inline-block; border: 3px solid black; border-radius: 15px; padding: 4px 12px; font-weight: bold; font-size: 20px; }
-        .feels { display: block; margin-top: 10px; font-size: 22px; opacity: 0.8; font-weight: bold;}
+        .condblock { float: left; width: 55%; padding-left: 20px; }
+        .cond { font-size: 34px; font-weight: 900; display: block; margin-bottom: 8px; line-height: 1.1;}
+        .aqi { display: inline-block; border: 3px solid black; border-radius: 15px; padding: 4px 12px; font-weight: 900; font-size: 18px; }
+        .feels { display: block; margin-top: 8px; font-size: 20px; opacity: 0.8; font-weight: 900;}
 
         /* CARDS ROW */
-        .cards { display: flex; justify-content: space-between; margin-bottom: 25px; }
-        .card { width: 32%; border: 3px solid black; border-radius: 10px; padding: 10px; height: 260px; }
-        .cardtitle { font-size: 20px; font-weight: bold; border-bottom: 3px solid black; padding-bottom: 5px; margin-bottom: 8px; }
+        .cards { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .card { width: 32%; border: 3px solid black; border-radius: 12px; padding: 10px; height: 230px; }
+        .cardtitle { font-size: 18px; font-weight: 900; border-bottom: 3px solid black; padding-bottom: 6px; margin-bottom: 8px; }
         
         /* DATA TABLES */
         table { width: 100%; border-collapse: collapse; }
-        td { padding: 4px 0; font-size: 19px; font-weight: bold;}
+        td { padding: 3px 0; font-size: 18px; font-weight: 900;}
         .k { text-align: left; opacity: 0.7; }
         .v { text-align: right; }
 
         /* FORECAST */
-        .forecastCard { border: 3px solid black; border-radius: 10px; padding: 12px; }
-        .forecastTitle { font-size: 24px; font-weight: bold; border-bottom: 3px solid black; margin-bottom: 8px; padding-bottom: 8px;}
+        .forecastCard { border: 3px solid black; border-radius: 12px; padding: 12px; }
+        .forecastTitle { font-size: 22px; font-weight: 900; border-bottom: 3px solid black; margin-bottom: 8px; padding-bottom: 8px;}
         .forecastTable td { border-bottom: 1px solid #ccc; padding: 8px 0; font-size: 22px;}
         
         /* FOOTER */
-        .footer { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 16px; color: #555; }
+        .footer { position: absolute; bottom: 5px; width: 100%; text-align: center; font-size: 14px; color: #555; }
     </style>
 </head>
 <body>
     <div class="topbar">
-        <div class="city" id="city">MUMBAI</div>
+        <div class="city" id="city">LOADING...</div>
         <div class="clock" id="clock">--:--</div>
     </div>
     <div class="bigrow">
@@ -66,7 +66,7 @@
         <div class="condblock">
             <div class="cond" id="cond">--</div>
             <div class="aqi" id="aqi">AQI --</div>
-            <div class="feels" id="feels">महसूस --°</div>
+            <div class="feels" id="feels">--</div>
         </div>
     </div>
     <div class="cards">
