@@ -2,404 +2,258 @@
 <html lang="hi">
 <head>
     <meta charset="utf-8">
-    <title>Kindle Weather Hindi Final</title>
+    <title>Smart Dashboard</title>
     <style>
-        /* RESET & BASICS */
         * { box-sizing: border-box; }
         body {
-            margin: 0;
-            padding: 0;
-            background-color: white;
-            color: black;
-            width: 758px;  /* Paperwhite Width */
-            height: 1024px; /* Paperwhite Height */
+            margin: 0; padding: 0;
+            background-color: white; color: black;
+            width: 758px; height: 1024px;
             overflow: hidden;
-            font-family: "Noto Sans Devanagari", "Lohit Devanagari", "Arial Unicode MS", sans-serif;
-            display: flex;
-            flex-direction: column;
+            font-family: "Noto Sans Devanagari", "Lohit Devanagari", sans-serif;
+            display: flex; flex-direction: column;
         }
 
-        /* 1. TOP BAR (Inverted Style) */
+        /* --- HEADER --- */
         .header {
-            background-color: black;
-            color: white;
-            width: 100%;
-            height: 80px; /* Taller for Tithi */
-            display: flex;
-            flex-direction: column; /* Stack Date & Tithi */
-            align-items: center;
-            justify-content: center;
-            padding: 5px 20px;
+            height: 70px; background: black; color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 25px;
         }
-        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; }
-        .city { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-        .date { font-size: 28px; font-weight: 900; }
-        .tithi-row { font-size: 18px; font-weight: 700; color: #ddd; margin-top: 2px; width: 100%; text-align: right; }
+        .header-date { font-size: 26px; font-weight: 900; }
+        .header-tithi { font-size: 20px; font-weight: 700; color: #ddd; }
 
-        /* 2. HERO SECTION (Temp + Summary) */
-        .hero {
-            display: flex;
-            align-items: center;
-            padding: 10px 20px;
-            border-bottom: 2px solid black;
-            height: 210px;
+        /* --- MAIN CONTENT SPLIT --- */
+        .main-stage {
+            flex-grow: 1; display: flex; flex-direction: column;
         }
-        .hero-left { width: 45%; }
-        .main-temp { font-size: 140px; font-weight: 900; line-height: 1; letter-spacing: -5px; }
+
+        /* SECTION A: DYNAMIC INK ART (Top Half) */
+        .ink-art-container {
+            height: 480px; /* Large canvas for art */
+            position: relative;
+            border-bottom: 4px solid black;
+            overflow: hidden;
+            display: flex; align-items: flex-end; justify-content: space-between;
+            padding: 20px;
+        }
         
-        .hero-right { width: 55%; padding-left: 10px; display: flex; flex-direction: column; justify-content: center; }
-        .main-cond { font-size: 38px; font-weight: 900; margin-bottom: 10px; line-height: 1.1; }
-        .summary { font-size: 24px; font-weight: 700; opacity: 0.8; line-height: 1.4; }
-        .aqi-badge { 
-            display: inline-block; 
-            background: black; 
-            color: white; 
-            padding: 4px 10px; 
-            border-radius: 4px; 
-            font-size: 18px; 
-            font-weight: 900; 
-            width: fit-content;
-            margin-top: 10px;
+        /* The SVG Art sits in the background */
+        .art-svg {
+            position: absolute; top: 20px; right: 20px;
+            width: 300px; height: 300px; opacity: 0.8;
+            z-index: 0;
         }
 
-        /* 3. HOURLY STRIP */
-        .hourly-title {
-            font-size: 22px; font-weight: 900; padding: 10px 20px 0; opacity: 0.7; text-transform: uppercase;
-        }
-        .hourly-container {
+        /* Weather Info Overlaid on Art */
+        .weather-overlay { z-index: 2; position: relative; width: 100%; }
+        .big-temp { font-size: 160px; font-weight: 900; line-height: 0.9; letter-spacing: -6px; }
+        .big-cond { font-size: 48px; font-weight: 900; margin-top: 10px; }
+        .summary-line { font-size: 24px; font-weight: 700; opacity: 0.7; margin-top: 5px; }
+        .astro-row { font-size: 22px; margin-top: 20px; font-weight: 700; display: flex; gap: 20px; }
+
+        /* SECTION B: BRIEFING DECK (Bottom Half) */
+        .briefing-deck {
+            flex-grow: 1;
             display: flex;
-            justify-content: space-between;
-            padding: 10px 20px 20px;
-            border-bottom: 3px solid black;
+            padding: 20px;
+            gap: 20px;
         }
-        .hour-box {
-            width: 23%;
+
+        /* Left Column: Calendar & Quote */
+        .deck-left { width: 35%; display: flex; flex-direction: column; gap: 20px; }
+        
+        .calendar-box {
+            border: 3px solid black; border-radius: 12px; padding: 15px;
             text-align: center;
-            background: #f0f0f0;
-            padding: 10px 5px;
-            border-radius: 8px;
         }
-        .h-time { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
-        .h-temp { font-size: 42px; font-weight: 900; line-height: 1.1; }
-        .h-cond { font-size: 22px; margin: 5px 0; font-weight: 700; height: 50px; overflow: hidden; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
-        .h-rain { font-size: 20px; font-weight: 900; color: #444; }
+        .cal-month { font-size: 20px; font-weight: 900; border-bottom: 2px solid black; margin-bottom: 5px; text-transform: uppercase;}
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; font-size: 14px; font-weight: 700; }
+        .cal-day { padding: 4px 0; }
+        .cal-today { background: black; color: white; border-radius: 4px; }
 
-        /* 4. DETAILS GRID */
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 15px 20px; 
-            flex-grow: 1; 
+        .quote-box {
+            border: 3px solid black; border-radius: 12px; padding: 15px;
+            flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
+            text-align: center;
         }
-        .detail-box {
-            border: 3px solid black;
-            border-radius: 12px;
-            padding: 8px 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-        }
-        .d-title { font-size: 22px; font-weight: 900; border-bottom: 2px solid black; padding-bottom: 5px; margin-bottom: 5px; }
-        .d-row { display: flex; justify-content: space-between; font-size: 26px; font-weight: 700; margin-bottom: 2px; }
+        .quote-text { font-size: 22px; font-style: italic; font-weight: 700; line-height: 1.3; }
+        .quote-author { font-size: 16px; margin-top: 10px; font-weight: 900; text-transform: uppercase; }
 
-        /* 5. FORECAST */
-        .forecast-container {
-            padding: 10px 20px;
-            border-top: 2px solid black;
+        /* Right Column: News Feed */
+        .deck-right { 
+            width: 65%; 
+            border: 3px solid black; border-radius: 12px; 
+            padding: 15px;
         }
-        .f-row {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #ccc;
-            padding: 6px 0;
-            font-size: 26px;
-            font-weight: 700;
-            align-items: center;
+        .news-title { font-size: 22px; font-weight: 900; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 10px; }
+        .news-item { 
+            font-size: 20px; font-weight: 700; 
+            margin-bottom: 15px; line-height: 1.3; 
+            border-bottom: 1px solid #ccc; padding-bottom: 10px;
         }
-        .f-row:last-child { border-bottom: none; }
-        
-        /* 6. ASTRO STRIP */
-        .astro-strip {
-            background: black;
-            color: white;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 24px;
-            font-weight: 900;
-            align-items: center;
-        }
-        .astro-group { display: flex; align-items: center; gap: 15px; }
-        .astro-icon { font-size: 30px; margin-right: 5px; }
+        .news-item:last-child { border: none; }
 
         /* FOOTER */
-        .footer { text-align: center; padding: 5px; font-size: 14px; color: #666; background: #eee;}
+        .footer-strip {
+            background: black; color: white;
+            text-align: center; font-size: 14px; padding: 5px;
+        }
 
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="header-top">
-            <div class="city" id="city">MUMBAI</div>
-            <div class="date" id="date">--</div>
-        </div>
-        <div class="tithi-row" id="tithi">चंद्र तिथि लोड हो रही है...</div>
+        <div class="header-date" id="date">--</div>
+        <div class="header-tithi" id="tithi">--</div>
     </div>
 
-    <div class="hero">
-        <div class="hero-left">
-            <div class="main-temp" id="temp">--</div>
+    <div class="main-stage">
+        
+        <div class="ink-art-container">
+            <div class="weather-overlay">
+                <div class="big-temp" id="temp">--°</div>
+                <div class="big-cond" id="cond">--</div>
+                <div class="summary-line" id="summary">--</div>
+                <div class="astro-row">
+                    <span id="sun">☀️ --</span> <span id="moon">🌙 --</span>
+                </div>
+            </div>
+            <div id="artCanvas" class="art-svg"></div>
         </div>
-        <div class="hero-right">
-            <div class="main-cond" id="cond">--</div>
-            <div class="summary" id="summary">...</div>
-            <div class="aqi-badge" id="aqi">AQI --</div>
-        </div>
-    </div>
 
-    <div class="hourly-title">अगले 12 घंटे</div>
-    <div class="hourly-container" id="hourlyStrip">
-        </div>
+        <div class="briefing-deck">
+            
+            <div class="deck-left">
+                <div class="calendar-box">
+                    <div class="cal-month" id="calMonth">--</div>
+                    <div class="cal-grid" id="calGrid"></div>
+                </div>
+                <div class="quote-box">
+                    <div class="quote-text" id="quoteText">"..."</div>
+                    <div class="quote-author" id="quoteAuthor">--</div>
+                </div>
+            </div>
 
-    <div class="grid-container">
-        <div class="detail-box">
-            <div class="d-title">हवा और बारिश</div>
-            <div class="d-row"><span>हवा</span><span id="wind">--</span></div>
-            <div class="d-row"><span>झोंके</span><span id="gust">--</span></div>
-            <div class="d-row"><span>बारिश</span><span id="rain">--</span></div>
-        </div>
-        <div class="detail-box">
-            <div class="d-title">वातावरण</div>
-            <div class="d-row"><span>आर्द्रता</span><span id="hum">--</span></div>
-            <div class="d-row"><span>दृश्यता</span><span id="vis">--</span></div>
-            <div class="d-row"><span>UV</span><span id="uv">--</span></div>
-        </div>
-    </div>
+            <div class="deck-right">
+                <div class="news-title">📰 मुख्य समाचार</div>
+                <div id="newsList">
+                    </div>
+            </div>
 
-    <div class="forecast-container" id="forecastRows"></div>
-
-    <div class="astro-strip">
-        <div class="astro-group">
-            <span class="astro-icon">☀️</span>
-            <span id="sun-times">--</span>
-        </div>
-        <div class="astro-group">
-            <span class="astro-icon">🌙</span>
-            <span id="moon-times">--</span>
         </div>
     </div>
 
-    <div class="footer" id="footerMsg">Updated: --</div>
+    <div class="footer-strip" id="updated">Updated: --</div>
 
     <script>
-        // === HINDI CONSTANTS ===
-        const DAYS_HI = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
-        const MONTHS_HI = ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
-
-        // === WEATHER CONDITION TRANSLATIONS (English -> Hindi) ===
-        const WEATHER_MAP = {
-            "Sunny": "धूप",
-            "Clear": "साफ़",
-            "Partly cloudy": "आंशिक बादल",
-            "Cloudy": "बादल",
-            "Overcast": "घने बादल",
-            "Mist": "कोहरा",
-            "Patchy rain possible": "हल्की बारिश संभव",
-            "Patchy snow possible": "हल्की बर्फबारी संभव",
-            "Patchy sleet possible": "ओले संभव",
-            "Patchy freezing drizzle possible": "बर्फीली बूंदाबांदी संभव",
-            "Thundery outbreaks possible": "तूफान संभव",
-            "Blowing snow": "बर्फबारी",
-            "Blizzard": "बर्फीला तूफान",
-            "Fog": "कोहरा",
-            "Freezing fog": "जमा देने वाला कोहरा",
-            "Patchy light drizzle": "हल्की बूंदाबांदी",
-            "Light drizzle": "बूंदाबांदी",
-            "Freezing drizzle": "बर्फीली बूंदाबांदी",
-            "Heavy freezing drizzle": "भारी बर्फीली बूंदाबांदी",
-            "Patchy light rain": "हल्की बारिश",
-            "Light rain": "हल्की बारिश",
-            "Moderate rain at times": "मध्यम बारिश",
-            "Moderate rain": "मध्यम बारिश",
-            "Heavy rain at times": "भारी बारिश",
-            "Heavy rain": "भारी बारिश",
-            "Light freezing rain": "हल्की बर्फीली बारिश",
-            "Moderate or heavy freezing rain": "भारी बर्फीली बारिश",
-            "Light sleet": "हल्की ओलावृष्टि",
-            "Moderate or heavy sleet": "भारी ओलावृष्टि",
-            "Patchy light snow": "हल्की बर्फबारी",
-            "Light snow": "हल्की बर्फबारी",
-            "Patchy moderate snow": "मध्यम बर्फबारी",
-            "Moderate snow": "मध्यम बर्फबारी",
-            "Patchy heavy snow": "भारी बर्फबारी",
-            "Heavy snow": "भारी बर्फबारी",
-            "Ice pellets": "बर्फ के गोले",
-            "Light rain shower": "हल्की बौछारें",
-            "Moderate or heavy rain shower": "भारी बौछारें",
-            "Torrential rain shower": "मूसलाधार बारिश",
-            "Light sleet showers": "ओले की बौछारें",
-            "Moderate or heavy sleet showers": "भारी ओले",
-            "Light snow showers": "बर्फ की बौछारें",
-            "Moderate or heavy snow showers": "भारी बर्फबारी",
-            "Light showers of ice pellets": "बर्फ के गोलों की बौछार",
-            "Moderate or heavy showers of ice pellets": "भारी बर्फ के गोले",
-            "Patchy light rain with thunder": "गरज के साथ बारिश",
-            "Moderate or heavy rain with thunder": "गरज-चमक के साथ बारिश",
-            "Patchy light snow with thunder": "गरज के साथ बर्फ",
-            "Moderate or heavy snow with thunder": "गरज-चमक के साथ बर्फ",
-            "Smoke": "धुआं",
-            "Haze": "धुंध",
-            "Dust": "धूल",
-            "Sand": "रेत",
-            "Ash": "राख",
-            "Squall": "आंधी",
-            "Tornado": "बवंडर"
+        // === ART ASSETS (Simple SVG Paths) ===
+        const ARTS = {
+            sun: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4"><circle cx="50" cy="50" r="20"/><path d="M50 10v15M50 75v15M10 50h15M75 50h15M22 22l10 10M68 68l10 10M22 78l10-10M68 32l10-10"/></svg>`,
+            cloud: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4"><path d="M25 60a15 15 0 0 1 0-30 18 18 0 0 1 35 0 12 12 0 0 1 0 24H25z"/></svg>`,
+            rain: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4"><path d="M25 50a15 15 0 0 1 0-30 18 18 0 0 1 35 0 12 12 0 0 1 0 24H25z"/><path d="M35 60l-5 15M50 60l-5 15M65 60l-5 15"/></svg>`,
+            moon: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4"><path d="M70 20 A 30 30 0 1 1 40 80 A 25 25 0 0 0 70 20 z"/></svg>`
         };
 
-        // Helper to translate weather text
-        function translateWeather(text) {
-            if (!text) return "";
-            return WEATHER_MAP[text.trim()] || text; // Returns original English if no translation found
+        // === HELPERS ===
+        const DAYS_HI = ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"];
+        const MONTHS_HI = ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
+        const WEATHER_MAP = { "Sunny": "खिली धूप", "Clear": "साफ़", "Partly cloudy": "आंशिक बादल", "Cloudy": "बादल", "Overcast": "घने बादल", "Mist": "कोहरा", "Rain": "बारिश", "Drizzle": "बूंदाबांदी", "Thunder": "तूफान", "Smoke": "धुआं" };
+
+        function translate(text) {
+            for (let k in WEATHER_MAP) { if (text.includes(k)) return WEATHER_MAP[k]; }
+            return text;
         }
 
-        function formatDateHindi(dateStr) {
-            const d = new Date(dateStr);
-            return `${DAYS_HI[d.getDay()]}, ${d.getDate()} ${MONTHS_HI[d.getMonth()]}`;
+        // Tithi Calc (Simplified)
+        function getTithi(date) {
+            const knownNewMoon = new Date('2000-01-06T18:14:00Z');
+            const diff = (date - knownNewMoon) / (1000 * 60 * 60 * 24);
+            const age = diff % 29.53;
+            const idx = Math.floor((age / 29.53) * 30) + 1;
+            const paksha = idx <= 15 ? "शुक्ल" : "कृष्ण";
+            return `${idx <= 15 ? '🌕' : '🌑'} ${paksha} पक्ष`;
         }
 
-        // === TITHI CALCULATION (Simplified Logic) ===
-        // This calculates the approximate Tithi based on Moon Phase age (0-29.5 days)
-        function getTithi(dateStr) {
-            const date = new Date(dateStr);
-            const knownNewMoon = new Date('2000-01-06T18:14:00Z'); // Reference New Moon
-            const lunation = 29.53058867; // Length of lunar month in days
-            
-            const diffTime = date.getTime() - knownNewMoon.getTime();
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
-            const moonAge = diffDays % lunation;
-            
-            // Each Tithi is 12 degrees or approx 0.98 days
-            // There are 30 Tithis in a lunar month (15 Shukla + 15 Krishna)
-            const tithiIndex = Math.floor((moonAge / lunation) * 30) + 1;
-            
-            let paksha = "";
-            let tithiName = "";
-            let icon = "";
+        // Calendar Render
+        function renderCalendar(date) {
+            const month = date.getMonth();
+            const year = date.getFullYear();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = date.getDate();
 
-            const tithiNames = [
-                "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", 
-                "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", 
-                "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा/अमावस्या"
-            ];
-
-            if (tithiIndex <= 15) {
-                paksha = "शुक्ल पक्ष";
-                tithiName = tithiNames[tithiIndex - 1];
-                icon = "🌕"; // Waxing
-                if (tithiIndex === 15) tithiName = "पूर्णिमा";
-            } else {
-                paksha = "कृष्ण पक्ष";
-                tithiName = tithiNames[(tithiIndex - 16)];
-                icon = "🌑"; // Waning
-                if (tithiIndex === 30 || tithiIndex === 0) tithiName = "अमावस्या";
+            document.getElementById("calMonth").innerText = MONTHS_HI[month];
+            
+            let html = "";
+            // Headers
+            ["S","M","T","W","T","F","S"].forEach(d => html += `<div>${d}</div>`);
+            // Blanks
+            for(let i=0; i<firstDay; i++) html += `<div></div>`;
+            // Days
+            for(let i=1; i<=daysInMonth; i++) {
+                const cls = i === today ? "cal-day cal-today" : "cal-day";
+                html += `<div class="${cls}">${i}</div>`;
             }
-
-            return `${icon} ${paksha} ${tithiName}`;
+            document.getElementById("calGrid").innerHTML = html;
         }
 
+        // Main Render
         function render(data) {
-            if(!data || !data.current) return;
-            const cur = data.current;
-            const loc = data.location;
-            const f = data.forecast.forecastday;
-            const today = f[0];
+            const w = data.weather;
+            const cur = w.current;
+            const today = w.forecast.forecastday[0];
+            const now = new Date(w.location.localtime);
 
             // 1. Header
-            document.getElementById("city").innerText = loc.name;
-            document.getElementById("date").innerText = formatDateHindi(loc.localtime);
-            
-            // Calculate and display Tithi
-            document.getElementById("tithi").innerText = getTithi(loc.localtime);
+            document.getElementById("date").innerText = `${DAYS_HI[now.getDay()]}, ${now.getDate()} ${MONTHS_HI[now.getMonth()]}`;
+            document.getElementById("tithi").innerText = getTithi(now);
 
-            // 2. Hero
+            // 2. Ink Art Weather
             document.getElementById("temp").innerText = Math.round(cur.temp_c) + "°";
-            document.getElementById("cond").innerText = translateWeather(cur.condition.text);
-            
-            const high = Math.round(today.day.maxtemp_c);
-            const low = Math.round(today.day.mintemp_c);
-            const rainChance = today.day.daily_chance_of_rain;
-            
-            // Translate summary manually
-            document.getElementById("summary").innerText = `अधिकतम ${high}° • न्यूनतम ${low}°\nबारिश की संभावना: ${rainChance}%`;
-            
-            const aqiVal = (cur.air_quality && cur.air_quality["us-epa-index"]) || "--";
-            document.getElementById("aqi").innerText = "AQI " + aqiVal;
+            const condText = translate(cur.condition.text);
+            document.getElementById("cond").innerText = condText;
+            document.getElementById("summary").innerText = `अधिकतम ${Math.round(today.day.maxtemp_c)}° • न्यूनतम ${Math.round(today.day.mintemp_c)}° • बारिश ${today.day.daily_chance_of_rain}%`;
+            document.getElementById("sun").innerText = `☀️ ${today.astro.sunrise}`;
+            document.getElementById("moon").innerText = `🌙 ${today.astro.moon_phase}`;
 
-            // 3. Hourly Logic
-            let allHours = [...today.hour, ...f[1].hour];
-            const currentEpoch = cur.last_updated_epoch;
-            let currentIndex = allHours.findIndex(h => h.time_epoch > currentEpoch);
-            if(currentIndex === -1) currentIndex = 0;
+            // Select Art
+            let art = ARTS.sun;
+            const textLower = cur.condition.text.toLowerCase();
+            const isNight = cur.is_day === 0;
 
-            let hourlyHTML = "";
-            [3, 6, 9, 12].forEach(offset => {
-                const h = allHours[currentIndex + offset];
-                if(h) {
-                    const dateObj = new Date(h.time);
-                    let hrs = dateObj.getHours();
-                    const ampm = hrs >= 12 ? 'PM' : 'AM';
-                    hrs = hrs % 12; 
-                    hrs = hrs ? hrs : 12;
-                    
-                    hourlyHTML += `
-                    <div class="hour-box">
-                        <div class="h-time">${hrs} ${ampm}</div>
-                        <div class="h-temp">${Math.round(h.temp_c)}°</div>
-                        <div class="h-cond">${translateWeather(h.condition.text)}</div>
-                        <div class="h-rain">💧 ${h.chance_of_rain}%</div>
-                    </div>`;
-                }
-            });
-            document.getElementById("hourlyStrip").innerHTML = hourlyHTML;
+            if (textLower.includes("rain") || textLower.includes("drizzle")) art = ARTS.rain;
+            else if (textLower.includes("cloud") || textLower.includes("overcast") || textLower.includes("mist")) art = ARTS.cloud;
+            else if (isNight) art = ARTS.moon;
 
-            // 4. Details
-            document.getElementById("wind").innerText = cur.wind_kph + " km";
-            document.getElementById("gust").innerText = cur.gust_kph + " km";
-            document.getElementById("rain").innerText = (cur.precip_mm || 0) + " mm";
-            document.getElementById("hum").innerText = cur.humidity + "%";
-            document.getElementById("vis").innerText = cur.vis_km + " km";
-            document.getElementById("uv").innerText = cur.uv;
+            document.getElementById("artCanvas").innerHTML = art;
 
-            // 5. Forecast List
-            let forecastHTML = "";
-            for(let i=1; i<=2; i++) {
-                const day = f[i];
-                const dName = DAYS_HI[new Date(day.date).getDay()];
-                forecastHTML += `
-                <div class="f-row">
-                    <div style="width:25%">${dName}</div>
-                    <div style="width:35%">${translateWeather(day.day.condition.text)}</div>
-                    <div style="width:40%; text-align:right;">
-                        ⬆${Math.round(day.day.maxtemp_c)}° ⬇${Math.round(day.day.mintemp_c)}°
-                    </div>
-                </div>`;
+            // 3. Calendar
+            renderCalendar(now);
+
+            // 4. Quote
+            if(data.quote) {
+                document.getElementById("quoteText").innerText = `"${data.quote.content}"`;
+                document.getElementById("quoteAuthor").innerText = `- ${data.quote.author}`;
             }
-            document.getElementById("forecastRows").innerHTML = forecastHTML;
 
-            // 6. Astro Strip
-            document.getElementById("sun-times").innerText = `${today.astro.sunrise} - ${today.astro.sunset}`;
-            document.getElementById("moon-times").innerText = `${today.astro.moonrise} - ${today.astro.moonset}`;
+            // 5. News
+            if(data.news && data.news.length > 0) {
+                let html = "";
+                data.news.forEach(n => {
+                    // Cleanup Google News titles (remove source name at end)
+                    const cleanTitle = n.split(" - ")[0];
+                    html += `<div class="news-item">${cleanTitle}</div>`;
+                });
+                document.getElementById("newsList").innerHTML = html;
+            }
 
-            document.getElementById("footerMsg").innerText = "Updated: " + loc.localtime.split(" ")[1];
+            document.getElementById("updated").innerText = "Last Update: " + w.location.localtime.split(" ")[1];
         }
 
-        // Init
         document.addEventListener("DOMContentLoaded", () => {
-            if (window.injectedData) {
-                render(window.injectedData);
-            }
+            if (window.injectedData) render(window.injectedData);
         });
     </script>
 </body>
