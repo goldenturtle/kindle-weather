@@ -1,8 +1,9 @@
 name: Update Weather Dashboard
+
 on:
   schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+    - cron: '0 * * * *' # Run every hour
+  workflow_dispatch:      # Allows manual trigger
 
 permissions:
   contents: write
@@ -23,6 +24,7 @@ jobs:
         run: |
           npm install puppeteer
           sudo apt-get update
+          # Install Hindi fonts + ImageMagick
           sudo apt-get install -y fonts-noto fonts-noto-core fonts-noto-ui-core fonts-lohit-deva imagemagick
 
       - name: Generate Dashboard Image
@@ -37,6 +39,7 @@ jobs:
 
           (async () => {
             try {
+              // 1. Fetch Data
               const city = process.env.CITY_NAME || 'Mumbai';
               const key = process.env.API_KEY;
               if (!key) { console.error('KEY MISSING'); process.exit(1); }
@@ -54,12 +57,17 @@ jobs:
               const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], headless: 'new'});
               const page = await browser.newPage();
               
-              // === FIXED RESOLUTION FOR PAPERWHITE ===
+              // === CRITICAL: PAPERWHITE RESOLUTION ===
               await page.setViewport({ width: 758, height: 1024, deviceScaleFactor: 1 });
 
+              // Inject Data
               await page.evaluateOnNewDocument((data) => { window.injectedData = data; }, weatherData);
+              
+              // Load File
               const htmlPath = path.resolve(process.env.GITHUB_WORKSPACE, 'weather.html');
               await page.goto('file://' + htmlPath, { waitUntil: 'networkidle0' });
+              
+              // Screenshot
               await page.screenshot({ path: 'weather.png' });
               await browser.close();
             } catch (e) { console.error(e); process.exit(1); }
@@ -68,7 +76,8 @@ jobs:
 
       - name: Convert to Kindle Grayscale
         run: |
-          # Force resize to Paperwhite dimensions (758x1024) to cover 100% of screen
+          # Force the image to be exactly 758x1024 (Paperwhite Size)
+          # The \! tells it to force the size even if aspect ratio is different
           convert weather.png -resize 758x1024\! -background white -gravity center -extent 758x1024 -colorspace Gray -depth 8 -type Grayscale weather-gray.png
 
       - name: Save Image to GitHub
