@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
     <meta charset="utf-8">
-    <title>Smart Dashboard</title>
+    <title>Kindle Weather Final</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -10,163 +10,198 @@
             background-color: white; color: black;
             width: 758px; height: 1024px;
             overflow: hidden;
-            font-family: "Noto Sans Devanagari", "Lohit Devanagari", sans-serif;
+            font-family: "Noto Sans Devanagari", "Lohit Devanagari", "Arial Unicode MS", sans-serif;
             display: flex; flex-direction: column;
         }
 
-        /* --- HEADER --- */
+        /* 1. HEADER */
         .header {
-            height: 70px; background: black; color: white;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 25px;
+            background-color: black; color: white;
+            height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px;
         }
-        .header-date { font-size: 26px; font-weight: 900; }
-        .header-tithi { font-size: 20px; font-weight: 700; color: #ddd; }
+        .header-left { display: flex; flex-direction: column; }
+        .city { font-size: 28px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+        .date { font-size: 20px; font-weight: 700; color: #ccc; }
+        .header-tithi { font-size: 22px; font-weight: 700; }
 
-        /* --- MAIN CONTENT SPLIT --- */
-        .main-stage {
-            flex-grow: 1; display: flex; flex-direction: column;
-        }
-
-        /* SECTION A: DYNAMIC INK ART (Top Half) */
-        .ink-art-container {
-            height: 480px; /* Large canvas for art */
-            position: relative;
-            border-bottom: 4px solid black;
+        /* 2. HERO WITH ART */
+        .hero {
+            position: relative; /* For Art Positioning */
+            height: 230px;
+            border-bottom: 3px solid black;
+            display: flex; align-items: center;
+            padding: 10px 20px;
             overflow: hidden;
-            display: flex; align-items: flex-end; justify-content: space-between;
-            padding: 20px;
         }
-        
-        /* The SVG Art sits in the background */
-        .art-svg {
-            position: absolute; top: 20px; right: 20px;
-            width: 300px; height: 300px; opacity: 0.8;
+        /* The Art sits behind the text */
+        .hero-art-bg {
+            position: absolute; right: -20px; top: 10px;
+            width: 280px; height: 280px;
+            opacity: 0.6; /* Subtle look */
             z-index: 0;
         }
+        .hero-content { z-index: 1; display: flex; width: 100%; align-items: center; }
+        .hero-left { width: 45%; }
+        .main-temp { font-size: 140px; font-weight: 900; line-height: 1; letter-spacing: -6px; }
+        .hero-right { width: 55%; padding-left: 10px; }
+        .main-cond { font-size: 40px; font-weight: 900; margin-bottom: 5px; line-height: 1.1; }
+        .summary { font-size: 22px; font-weight: 700; line-height: 1.3; }
 
-        /* Weather Info Overlaid on Art */
-        .weather-overlay { z-index: 2; position: relative; width: 100%; }
-        .big-temp { font-size: 160px; font-weight: 900; line-height: 0.9; letter-spacing: -6px; }
-        .big-cond { font-size: 48px; font-weight: 900; margin-top: 10px; }
-        .summary-line { font-size: 24px; font-weight: 700; opacity: 0.7; margin-top: 5px; }
-        .astro-row { font-size: 22px; margin-top: 20px; font-weight: 700; display: flex; gap: 20px; }
-
-        /* SECTION B: BRIEFING DECK (Bottom Half) */
-        .briefing-deck {
-            flex-grow: 1;
-            display: flex;
-            padding: 20px;
-            gap: 20px;
+        /* 3. HOURLY STRIP */
+        .hourly-title { font-size: 20px; font-weight: 900; padding: 8px 20px 0; opacity: 0.7; text-transform: uppercase; }
+        .hourly-container {
+            display: flex; justify-content: space-between;
+            padding: 5px 20px 15px;
+            border-bottom: 3px solid black;
         }
+        .hour-box {
+            width: 23%; text-align: center;
+            background: #f0f0f0; border-radius: 8px; padding: 8px 4px;
+        }
+        .h-time { font-size: 22px; font-weight: 900; margin-bottom: 2px; }
+        .h-temp { font-size: 38px; font-weight: 900; line-height: 1; }
+        .h-cond { font-size: 20px; font-weight: 700; height: 45px; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .h-rain { font-size: 18px; font-weight: 900; color: #444; }
 
-        /* Left Column: Calendar & Quote */
-        .deck-left { width: 35%; display: flex; flex-direction: column; gap: 20px; }
-        
-        .calendar-box {
-            border: 3px solid black; border-radius: 12px; padding: 15px;
+        /* 4. DETAILS GRID */
+        .grid-container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            padding: 15px 20px; 
+        }
+        .detail-box {
+            border: 3px solid black; border-radius: 12px;
+            padding: 8px 15px;
+        }
+        .d-title { font-size: 20px; font-weight: 900; border-bottom: 2px solid black; margin-bottom: 4px; }
+        .d-row { display: flex; justify-content: space-between; font-size: 24px; font-weight: 700; }
+
+        /* 5. FORECAST */
+        .forecast-container { padding: 5px 20px; border-top: 2px solid black; }
+        .f-row {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #ccc; padding: 6px 0;
+            font-size: 24px; font-weight: 700;
+        }
+        .f-row:last-child { border-bottom: none; }
+
+        /* 6. SUVICHAR (QUOTE) - NEW SECTION */
+        .quote-container {
+            margin: 10px 20px;
+            border: 3px solid black; border-radius: 12px;
+            padding: 10px;
             text-align: center;
+            flex-grow: 1; /* Fills remaining space */
+            display: flex; flex-direction: column; justify-content: center;
         }
-        .cal-month { font-size: 20px; font-weight: 900; border-bottom: 2px solid black; margin-bottom: 5px; text-transform: uppercase;}
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; font-size: 14px; font-weight: 700; }
-        .cal-day { padding: 4px 0; }
-        .cal-today { background: black; color: white; border-radius: 4px; }
-
-        .quote-box {
-            border: 3px solid black; border-radius: 12px; padding: 15px;
-            flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
-            text-align: center;
-        }
+        .quote-label { font-size: 16px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid black; display: inline-block; margin: 0 auto 5px; }
         .quote-text { font-size: 22px; font-style: italic; font-weight: 700; line-height: 1.3; }
-        .quote-author { font-size: 16px; margin-top: 10px; font-weight: 900; text-transform: uppercase; }
 
-        /* Right Column: News Feed */
-        .deck-right { 
-            width: 65%; 
-            border: 3px solid black; border-radius: 12px; 
-            padding: 15px;
+        /* 7. ASTRO STRIP */
+        .astro-strip {
+            background: black; color: white;
+            padding: 8px 20px;
+            display: flex; justify-content: space-between;
+            font-size: 20px; font-weight: 900;
         }
-        .news-title { font-size: 22px; font-weight: 900; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 10px; }
-        .news-item { 
-            font-size: 20px; font-weight: 700; 
-            margin-bottom: 15px; line-height: 1.3; 
-            border-bottom: 1px solid #ccc; padding-bottom: 10px;
-        }
-        .news-item:last-child { border: none; }
 
         /* FOOTER */
-        .footer-strip {
-            background: black; color: white;
-            text-align: center; font-size: 14px; padding: 5px;
-        }
+        .footer { text-align: center; font-size: 12px; color: #666; background: #eee; padding: 2px; }
 
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="header-date" id="date">--</div>
+        <div class="header-left">
+            <div class="city" id="city">MUMBAI</div>
+            <div class="date" id="date">--</div>
+        </div>
         <div class="header-tithi" id="tithi">--</div>
     </div>
 
-    <div class="main-stage">
-        
-        <div class="ink-art-container">
-            <div class="weather-overlay">
-                <div class="big-temp" id="temp">--°</div>
-                <div class="big-cond" id="cond">--</div>
-                <div class="summary-line" id="summary">--</div>
-                <div class="astro-row">
-                    <span id="sun">☀️ --</span> <span id="moon">🌙 --</span>
-                </div>
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-left">
+                <div class="main-temp" id="temp">--</div>
             </div>
-            <div id="artCanvas" class="art-svg"></div>
+            <div class="hero-right">
+                <div class="main-cond" id="cond">--</div>
+                <div class="summary" id="summary">--</div>
+            </div>
         </div>
+        <div id="heroArt" class="hero-art-bg"></div>
+    </div>
 
-        <div class="briefing-deck">
-            
-            <div class="deck-left">
-                <div class="calendar-box">
-                    <div class="cal-month" id="calMonth">--</div>
-                    <div class="cal-grid" id="calGrid"></div>
-                </div>
-                <div class="quote-box">
-                    <div class="quote-text" id="quoteText">"..."</div>
-                    <div class="quote-author" id="quoteAuthor">--</div>
-                </div>
-            </div>
+    <div class="hourly-title">अगले 12 घंटे</div>
+    <div class="hourly-container" id="hourlyStrip"></div>
 
-            <div class="deck-right">
-                <div class="news-title">📰 मुख्य समाचार</div>
-                <div id="newsList">
-                    </div>
-            </div>
-
+    <div class="grid-container">
+        <div class="detail-box">
+            <div class="d-title">हवा और बारिश</div>
+            <div class="d-row"><span>हवा</span><span id="wind">--</span></div>
+            <div class="d-row"><span>झोंके</span><span id="gust">--</span></div>
+            <div class="d-row"><span>बारिश</span><span id="rain">--</span></div>
+        </div>
+        <div class="detail-box">
+            <div class="d-title">वातावरण</div>
+            <div class="d-row"><span>आर्द्रता</span><span id="hum">--</span></div>
+            <div class="d-row"><span>दृश्यता</span><span id="vis">--</span></div>
+            <div class="d-row"><span>UV</span><span id="uv">--</span></div>
         </div>
     </div>
 
-    <div class="footer-strip" id="updated">Updated: --</div>
+    <div class="forecast-container" id="forecastRows"></div>
+
+    <div class="quote-container">
+        <div class="quote-label">आज का सुविचार</div>
+        <div class="quote-text" id="quoteText">...</div>
+    </div>
+
+    <div class="astro-strip">
+        <span id="sun-times">☀️ --</span>
+        <span id="moon-times">🌙 --</span>
+    </div>
+
+    <div class="footer" id="footerMsg">Updated: --</div>
 
     <script>
-        // === ART ASSETS (Simple SVG Paths) ===
+        // === ASSETS ===
+        const QUOTES_HI = [
+            "कर्म ही पूजा है।", "सत्यमेव जयते।", "विश्वास वो शक्ति है जिससे उजड़ी हुई दुनिया में प्रकाश लाया जा सकता है।",
+            "जीवन का सबसे बड़ा गुरु वक्त होता है।", "कड़ी मेहनत का कोई विकल्प नहीं है।", "जो होता है, अच्छे के लिए होता है।",
+            "धैर्य कड़वा है, लेकिन इसका फल मीठा है।", "सपने वो नहीं जो हम सोते हुए देखते हैं, सपने वो हैं जो हमें सोने नहीं देते।",
+            "समय और समझ एक साथ खुशकिस्मत लोगों को ही मिलते हैं।", "बड़ा सोचो, जल्दी सोचो, आगे सोचो।",
+            "गलतियाँ इस बात का सबूत हैं कि आप कोशिश कर रहे हैं।", "मंजिलें उन्हीं को मिलती हैं, जिनके सपनों में जान होती है।",
+            "अपने आप पर विश्वास रखो, दुनिया आपकी मुट्ठी में होगी।", "सफलता का कोई शॉर्टकट नहीं होता।",
+            "ज्ञान से बड़ा कोई मित्र नहीं और अज्ञान से बड़ा कोई शत्रु नहीं।", "शांति की शुरुआत मुस्कुराहट से होती है।",
+            "क्रोध मूर्खता से शुरू होता है और पश्चाताप पर खत्म।", "वक्त दिखाई नहीं देता पर बहुत कुछ दिखा देता है।",
+            "खुशी तब मिलेगी जब आप जो सोचते हैं, जो कहते हैं और जो करते हैं, उसमें सामंजस्य हो।", "स्वास्थ्य ही सबसे बड़ा धन है।",
+            "विद्या वह धन है जिसे कोई चुरा नहीं सकता।", "परोपकार ही जीवन का सार है।",
+            "संगत का असर बहुत गहरा होता है।", "मीठी वाणी बोलिए, मन का आपा खोय।",
+            "अहंकार ज्ञान का शत्रु है।", "सच्चाई परेशान हो सकती है, पराजित नहीं।",
+            "मेहनत इतनी खामोशी से करो कि सफलता शोर मचा दे।", "आज का काम कल पर मत छोड़ो।",
+            "प्रकृति में गहराई से देखो, और तुम सब कुछ बेहतर समझोगे।", "जीवन एक यात्रा है, इसे जियो।", "हमेशा खुश रहो।"
+        ];
+
         const ARTS = {
-            sun: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4"><circle cx="50" cy="50" r="20"/><path d="M50 10v15M50 75v15M10 50h15M75 50h15M22 22l10 10M68 68l10 10M22 78l10-10M68 32l10-10"/></svg>`,
-            cloud: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4"><path d="M25 60a15 15 0 0 1 0-30 18 18 0 0 1 35 0 12 12 0 0 1 0 24H25z"/></svg>`,
-            rain: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4"><path d="M25 50a15 15 0 0 1 0-30 18 18 0 0 1 35 0 12 12 0 0 1 0 24H25z"/><path d="M35 60l-5 15M50 60l-5 15M65 60l-5 15"/></svg>`,
-            moon: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4"><path d="M70 20 A 30 30 0 1 1 40 80 A 25 25 0 0 0 70 20 z"/></svg>`
+            sun: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="3"><circle cx="50" cy="50" r="20"/><path d="M50 10v15M50 75v15M10 50h15M75 50h15M22 22l10 10M68 68l10 10M22 78l10-10M68 32l10-10"/></svg>`,
+            cloud: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="3"><path d="M25 60a15 15 0 0 1 0-30 18 18 0 0 1 35 0 12 12 0 0 1 0 24H25z"/></svg>`,
+            rain: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="3"><path d="M25 50a15 15 0 0 1 0-30 18 18 0 0 1 35 0 12 12 0 0 1 0 24H25z"/><path d="M35 60l-5 15M50 60l-5 15M65 60l-5 15"/></svg>`,
+            moon: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="3"><path d="M70 20 A 30 30 0 1 1 40 80 A 25 25 0 0 0 70 20 z"/></svg>`
         };
 
-        // === HELPERS ===
-        const DAYS_HI = ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"];
-        const MONTHS_HI = ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
-        const WEATHER_MAP = { "Sunny": "खिली धूप", "Clear": "साफ़", "Partly cloudy": "आंशिक बादल", "Cloudy": "बादल", "Overcast": "घने बादल", "Mist": "कोहरा", "Rain": "बारिश", "Drizzle": "बूंदाबांदी", "Thunder": "तूफान", "Smoke": "धुआं" };
+        const DAYS_HI = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
+        const MONTHS_HI = ["जन", "फर", "मार्च", "अप्रेल", "मई", "जून", "जुलाई", "अगस्त", "सित", "अक्तू", "नव", "दिस"];
+        const WEATHER_MAP = { "Sunny": "खिली धूप", "Clear": "साफ़", "Partly cloudy": "आंशिक बादल", "Cloudy": "बादल", "Overcast": "घने बादल", "Mist": "कोहरा", "Rain": "बारिश", "Drizzle": "बूंदाबांदी", "Thunder": "तूफान", "Smoke": "धुआं", "Haze": "धुंध" };
 
         function translate(text) {
             for (let k in WEATHER_MAP) { if (text.includes(k)) return WEATHER_MAP[k]; }
             return text;
         }
 
-        // Tithi Calc (Simplified)
+        // Tithi Calculation
         function getTithi(date) {
             const knownNewMoon = new Date('2000-01-06T18:14:00Z');
             const diff = (date - knownNewMoon) / (1000 * 60 * 60 * 24);
@@ -176,80 +211,91 @@
             return `${idx <= 15 ? '🌕' : '🌑'} ${paksha} पक्ष`;
         }
 
-        // Calendar Render
-        function renderCalendar(date) {
-            const month = date.getMonth();
-            const year = date.getFullYear();
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const today = date.getDate();
-
-            document.getElementById("calMonth").innerText = MONTHS_HI[month];
-            
-            let html = "";
-            // Headers
-            ["S","M","T","W","T","F","S"].forEach(d => html += `<div>${d}</div>`);
-            // Blanks
-            for(let i=0; i<firstDay; i++) html += `<div></div>`;
-            // Days
-            for(let i=1; i<=daysInMonth; i++) {
-                const cls = i === today ? "cal-day cal-today" : "cal-day";
-                html += `<div class="${cls}">${i}</div>`;
-            }
-            document.getElementById("calGrid").innerHTML = html;
-        }
-
-        // Main Render
         function render(data) {
-            const w = data.weather;
-            const cur = w.current;
-            const today = w.forecast.forecastday[0];
-            const now = new Date(w.location.localtime);
+            if(!data || !data.current) return;
+            const cur = data.current;
+            const loc = data.location;
+            const f = data.forecast.forecastday;
+            const today = f[0];
+            const now = new Date(loc.localtime);
 
             // 1. Header
+            document.getElementById("city").innerText = loc.name;
             document.getElementById("date").innerText = `${DAYS_HI[now.getDay()]}, ${now.getDate()} ${MONTHS_HI[now.getMonth()]}`;
             document.getElementById("tithi").innerText = getTithi(now);
 
-            // 2. Ink Art Weather
+            // 2. Hero
             document.getElementById("temp").innerText = Math.round(cur.temp_c) + "°";
-            const condText = translate(cur.condition.text);
-            document.getElementById("cond").innerText = condText;
+            document.getElementById("cond").innerText = translate(cur.condition.text);
             document.getElementById("summary").innerText = `अधिकतम ${Math.round(today.day.maxtemp_c)}° • न्यूनतम ${Math.round(today.day.mintemp_c)}° • बारिश ${today.day.daily_chance_of_rain}%`;
-            document.getElementById("sun").innerText = `☀️ ${today.astro.sunrise}`;
-            document.getElementById("moon").innerText = `🌙 ${today.astro.moon_phase}`;
-
-            // Select Art
+            
+            // Art Selection
             let art = ARTS.sun;
             const textLower = cur.condition.text.toLowerCase();
             const isNight = cur.is_day === 0;
-
             if (textLower.includes("rain") || textLower.includes("drizzle")) art = ARTS.rain;
             else if (textLower.includes("cloud") || textLower.includes("overcast") || textLower.includes("mist")) art = ARTS.cloud;
             else if (isNight) art = ARTS.moon;
+            document.getElementById("heroArt").innerHTML = art;
 
-            document.getElementById("artCanvas").innerHTML = art;
+            // 3. Hourly
+            let allHours = [...today.hour, ...f[1].hour];
+            const currentEpoch = cur.last_updated_epoch;
+            let currentIndex = allHours.findIndex(h => h.time_epoch > currentEpoch);
+            if(currentIndex === -1) currentIndex = 0;
 
-            // 3. Calendar
-            renderCalendar(now);
+            let hourlyHTML = "";
+            [3, 6, 9, 12].forEach(offset => {
+                const h = allHours[currentIndex + offset];
+                if(h) {
+                    const dateObj = new Date(h.time);
+                    let hrs = dateObj.getHours();
+                    const ampm = hrs >= 12 ? 'PM' : 'AM';
+                    hrs = hrs % 12; hrs = hrs ? hrs : 12;
+                    hourlyHTML += `
+                    <div class="hour-box">
+                        <div class="h-time">${hrs} ${ampm}</div>
+                        <div class="h-temp">${Math.round(h.temp_c)}°</div>
+                        <div class="h-cond">${translate(h.condition.text)}</div>
+                        <div class="h-rain">💧 ${h.chance_of_rain}%</div>
+                    </div>`;
+                }
+            });
+            document.getElementById("hourlyStrip").innerHTML = hourlyHTML;
 
-            // 4. Quote
-            if(data.quote) {
-                document.getElementById("quoteText").innerText = `"${data.quote.content}"`;
-                document.getElementById("quoteAuthor").innerText = `- ${data.quote.author}`;
+            // 4. Details
+            document.getElementById("wind").innerText = cur.wind_kph + " km";
+            document.getElementById("gust").innerText = cur.gust_kph + " km";
+            document.getElementById("rain").innerText = (cur.precip_mm || 0) + " mm";
+            document.getElementById("hum").innerText = cur.humidity + "%";
+            document.getElementById("vis").innerText = cur.vis_km + " km";
+            document.getElementById("uv").innerText = cur.uv;
+
+            // 5. Forecast
+            let forecastHTML = "";
+            for(let i=1; i<=2; i++) {
+                const day = f[i];
+                const dName = DAYS_HI[new Date(day.date).getDay()];
+                forecastHTML += `
+                <div class="f-row">
+                    <div style="width:25%">${dName}</div>
+                    <div style="width:35%">${translate(day.day.condition.text)}</div>
+                    <div style="width:40%; text-align:right;">
+                        ⬆${Math.round(day.day.maxtemp_c)}° ⬇${Math.round(day.day.mintemp_c)}°
+                    </div>
+                </div>`;
             }
+            document.getElementById("forecastRows").innerHTML = forecastHTML;
 
-            // 5. News
-            if(data.news && data.news.length > 0) {
-                let html = "";
-                data.news.forEach(n => {
-                    // Cleanup Google News titles (remove source name at end)
-                    const cleanTitle = n.split(" - ")[0];
-                    html += `<div class="news-item">${cleanTitle}</div>`;
-                });
-                document.getElementById("newsList").innerHTML = html;
-            }
+            // 6. Quote (Based on Day of Month)
+            const quoteIndex = (now.getDate() - 1) % QUOTES_HI.length;
+            document.getElementById("quoteText").innerText = `"${QUOTES_HI[quoteIndex]}"`;
 
-            document.getElementById("updated").innerText = "Last Update: " + w.location.localtime.split(" ")[1];
+            // 7. Astro
+            document.getElementById("sun-times").innerText = `${today.astro.sunrise} - ${today.astro.sunset}`;
+            document.getElementById("moon-times").innerText = `${today.astro.moonrise} - ${today.astro.moonset}`;
+
+            document.getElementById("footerMsg").innerText = "Updated: " + loc.localtime.split(" ")[1];
         }
 
         document.addEventListener("DOMContentLoaded", () => {
