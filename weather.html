@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
     <meta charset="utf-8">
-    <title>Kindle Weather Final</title>
+    <title>Kindle Weather Classic</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -14,124 +14,117 @@
             display: flex; flex-direction: column;
         }
 
-        /* 1. HEADER */
+        /* 1. HEADER (Restored Layout) */
         .header {
             background-color: black; color: white;
-            height: 70px;
+            height: 90px; /* Taller to fit Date + Tithi */
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 25px;
         }
-        .header-left { display: flex; flex-direction: column; }
-        .city { font-size: 28px; font-weight: 900; text-transform: uppercase; line-height: 1; }
-        .date { font-size: 20px; font-weight: 700; color: #ccc; }
-        .header-tithi { font-size: 22px; font-weight: 700; }
+        .city { font-size: 36px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .header-right { 
+            text-align: right; display: flex; flex-direction: column; justify-content: center; 
+        }
+        .date { font-size: 26px; font-weight: 900; margin-bottom: 4px; }
+        .tithi { font-size: 20px; font-weight: 700; color: #ddd; }
 
-        /* 2. HERO WITH ART */
+        /* 2. HERO (Clean, No Graphics) */
         .hero {
-            position: relative; /* For Art Positioning */
-            height: 230px;
-            border-bottom: 3px solid black;
             display: flex; align-items: center;
-            padding: 10px 20px;
-            overflow: hidden;
+            padding: 20px 25px;
+            border-bottom: 3px solid black;
+            height: 240px;
         }
-        /* The Art sits behind the text */
-        .hero-art-bg {
-            position: absolute; right: -20px; top: 10px;
-            width: 280px; height: 280px;
-            opacity: 0.6; /* Subtle look */
-            z-index: 0;
-        }
-        .hero-content { z-index: 1; display: flex; width: 100%; align-items: center; }
         .hero-left { width: 45%; }
         .main-temp { font-size: 140px; font-weight: 900; line-height: 1; letter-spacing: -6px; }
-        .hero-right { width: 55%; padding-left: 10px; }
-        .main-cond { font-size: 40px; font-weight: 900; margin-bottom: 5px; line-height: 1.1; }
-        .summary { font-size: 22px; font-weight: 700; line-height: 1.3; }
+        
+        .hero-right { width: 55%; padding-left: 20px; display: flex; flex-direction: column; justify-content: center; }
+        .main-cond { font-size: 42px; font-weight: 900; margin-bottom: 10px; line-height: 1.1; }
+        .summary { font-size: 22px; font-weight: 700; opacity: 0.8; line-height: 1.4; margin-bottom: 15px;}
+        
+        .aqi-box { 
+            display: inline-block; 
+            border: 3px solid black; 
+            color: black; 
+            padding: 5px 12px; 
+            border-radius: 8px; 
+            font-size: 20px; 
+            font-weight: 900; 
+            width: fit-content;
+        }
 
         /* 3. HOURLY STRIP */
-        .hourly-title { font-size: 20px; font-weight: 900; padding: 8px 20px 0; opacity: 0.7; text-transform: uppercase; }
+        .hourly-title { font-size: 22px; font-weight: 900; padding: 15px 25px 0; opacity: 0.7; text-transform: uppercase; }
         .hourly-container {
             display: flex; justify-content: space-between;
-            padding: 5px 20px 15px;
+            padding: 10px 25px 20px;
             border-bottom: 3px solid black;
         }
         .hour-box {
             width: 23%; text-align: center;
-            background: #f0f0f0; border-radius: 8px; padding: 8px 4px;
+            background: #f0f0f0; border-radius: 10px; padding: 10px 5px;
         }
-        .h-time { font-size: 22px; font-weight: 900; margin-bottom: 2px; }
-        .h-temp { font-size: 38px; font-weight: 900; line-height: 1; }
-        .h-cond { font-size: 20px; font-weight: 700; height: 45px; display: flex; align-items: center; justify-content: center; line-height: 1; }
-        .h-rain { font-size: 18px; font-weight: 900; color: #444; }
+        .h-time { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
+        .h-temp { font-size: 40px; font-weight: 900; line-height: 1.1; }
+        .h-cond { font-size: 22px; margin: 5px 0; font-weight: 700; height: 50px; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .h-rain { font-size: 20px; font-weight: 900; color: #444; }
 
         /* 4. DETAILS GRID */
         .grid-container {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
-            padding: 15px 20px; 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            padding: 20px 25px; 
+            flex-grow: 1; 
         }
         .detail-box {
-            border: 3px solid black; border-radius: 12px;
-            padding: 8px 15px;
+            border: 3px solid black; border-radius: 12px; padding: 10px 20px;
+            display: flex; flex-direction: column; justify-content: space-evenly;
         }
-        .d-title { font-size: 20px; font-weight: 900; border-bottom: 2px solid black; margin-bottom: 4px; }
-        .d-row { display: flex; justify-content: space-between; font-size: 24px; font-weight: 700; }
+        .d-title { font-size: 22px; font-weight: 900; border-bottom: 2px solid black; margin-bottom: 8px; padding-bottom: 4px; }
+        .d-row { display: flex; justify-content: space-between; font-size: 26px; font-weight: 700; margin-bottom: 4px; }
 
         /* 5. FORECAST */
-        .forecast-container { padding: 5px 20px; border-top: 2px solid black; }
+        .forecast-container { padding: 10px 25px; border-top: 2px solid black; }
         .f-row {
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #ccc; padding: 6px 0;
-            font-size: 24px; font-weight: 700;
+            border-bottom: 1px solid #ccc; padding: 8px 0;
+            font-size: 26px; font-weight: 700;
         }
         .f-row:last-child { border-bottom: none; }
-
-        /* 6. SUVICHAR (QUOTE) - NEW SECTION */
-        .quote-container {
-            margin: 10px 20px;
-            border: 3px solid black; border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            flex-grow: 1; /* Fills remaining space */
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .quote-label { font-size: 16px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid black; display: inline-block; margin: 0 auto 5px; }
-        .quote-text { font-size: 22px; font-style: italic; font-weight: 700; line-height: 1.3; }
-
-        /* 7. ASTRO STRIP */
+        
+        /* 6. ASTRO STRIP */
         .astro-strip {
             background: black; color: white;
-            padding: 8px 20px;
+            padding: 15px 25px;
             display: flex; justify-content: space-between;
-            font-size: 20px; font-weight: 900;
+            font-size: 24px; font-weight: 900; align-items: center;
         }
+        .astro-group { display: flex; align-items: center; gap: 15px; }
 
         /* FOOTER */
-        .footer { text-align: center; font-size: 12px; color: #666; background: #eee; padding: 2px; }
+        .footer { text-align: center; font-size: 14px; color: #666; background: #eee; padding: 4px; }
 
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="header-left">
-            <div class="city" id="city">MUMBAI</div>
+        <div class="city" id="city">MUMBAI</div>
+        <div class="header-right">
             <div class="date" id="date">--</div>
+            <div class="tithi" id="tithi">--</div>
         </div>
-        <div class="header-tithi" id="tithi">--</div>
     </div>
 
     <div class="hero">
-        <div class="hero-content">
-            <div class="hero-left">
-                <div class="main-temp" id="temp">--</div>
-            </div>
-            <div class="hero-right">
-                <div class="main-cond" id="cond">--</div>
-                <div class="summary" id="summary">--</div>
-            </div>
+        <div class="hero-left">
+            <div class="main-temp" id="temp">--</div>
         </div>
-        <div id="heroArt" class="hero-art-bg"></div>
+        <div class="hero-right">
+            <div class="main-cond" id="cond">--</div>
+            <div class="summary" id="summary">...</div>
+            <div class="aqi-box" id="aqi">AQI --</div>
+        </div>
     </div>
 
     <div class="hourly-title">अगले 12 घंटे</div>
@@ -154,46 +147,19 @@
 
     <div class="forecast-container" id="forecastRows"></div>
 
-    <div class="quote-container">
-        <div class="quote-label">आज का सुविचार</div>
-        <div class="quote-text" id="quoteText">...</div>
-    </div>
-
     <div class="astro-strip">
-        <span id="sun-times">☀️ --</span>
-        <span id="moon-times">🌙 --</span>
+        <div class="astro-group"><span id="sun-times">☀️ --</span></div>
+        <div class="astro-group"><span id="moon-times">🌙 --</span></div>
     </div>
 
     <div class="footer" id="footerMsg">Updated: --</div>
 
     <script>
-        // === ASSETS ===
-        const QUOTES_HI = [
-            "कर्म ही पूजा है।", "सत्यमेव जयते।", "विश्वास वो शक्ति है जिससे उजड़ी हुई दुनिया में प्रकाश लाया जा सकता है।",
-            "जीवन का सबसे बड़ा गुरु वक्त होता है।", "कड़ी मेहनत का कोई विकल्प नहीं है।", "जो होता है, अच्छे के लिए होता है।",
-            "धैर्य कड़वा है, लेकिन इसका फल मीठा है।", "सपने वो नहीं जो हम सोते हुए देखते हैं, सपने वो हैं जो हमें सोने नहीं देते।",
-            "समय और समझ एक साथ खुशकिस्मत लोगों को ही मिलते हैं।", "बड़ा सोचो, जल्दी सोचो, आगे सोचो।",
-            "गलतियाँ इस बात का सबूत हैं कि आप कोशिश कर रहे हैं।", "मंजिलें उन्हीं को मिलती हैं, जिनके सपनों में जान होती है।",
-            "अपने आप पर विश्वास रखो, दुनिया आपकी मुट्ठी में होगी।", "सफलता का कोई शॉर्टकट नहीं होता।",
-            "ज्ञान से बड़ा कोई मित्र नहीं और अज्ञान से बड़ा कोई शत्रु नहीं।", "शांति की शुरुआत मुस्कुराहट से होती है।",
-            "क्रोध मूर्खता से शुरू होता है और पश्चाताप पर खत्म।", "वक्त दिखाई नहीं देता पर बहुत कुछ दिखा देता है।",
-            "खुशी तब मिलेगी जब आप जो सोचते हैं, जो कहते हैं और जो करते हैं, उसमें सामंजस्य हो।", "स्वास्थ्य ही सबसे बड़ा धन है।",
-            "विद्या वह धन है जिसे कोई चुरा नहीं सकता।", "परोपकार ही जीवन का सार है।",
-            "संगत का असर बहुत गहरा होता है।", "मीठी वाणी बोलिए, मन का आपा खोय।",
-            "अहंकार ज्ञान का शत्रु है।", "सच्चाई परेशान हो सकती है, पराजित नहीं।",
-            "मेहनत इतनी खामोशी से करो कि सफलता शोर मचा दे।", "आज का काम कल पर मत छोड़ो।",
-            "प्रकृति में गहराई से देखो, और तुम सब कुछ बेहतर समझोगे।", "जीवन एक यात्रा है, इसे जियो।", "हमेशा खुश रहो।"
-        ];
-
-        const ARTS = {
-            sun: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="3"><circle cx="50" cy="50" r="20"/><path d="M50 10v15M50 75v15M10 50h15M75 50h15M22 22l10 10M68 68l10 10M22 78l10-10M68 32l10-10"/></svg>`,
-            cloud: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="3"><path d="M25 60a15 15 0 0 1 0-30 18 18 0 0 1 35 0 12 12 0 0 1 0 24H25z"/></svg>`,
-            rain: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="3"><path d="M25 50a15 15 0 0 1 0-30 18 18 0 0 1 35 0 12 12 0 0 1 0 24H25z"/><path d="M35 60l-5 15M50 60l-5 15M65 60l-5 15"/></svg>`,
-            moon: `<svg viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="3"><path d="M70 20 A 30 30 0 1 1 40 80 A 25 25 0 0 0 70 20 z"/></svg>`
-        };
-
+        // === HINDI CONSTANTS ===
         const DAYS_HI = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
-        const MONTHS_HI = ["जन", "फर", "मार्च", "अप्रेल", "मई", "जून", "जुलाई", "अगस्त", "सित", "अक्तू", "नव", "दिस"];
+        const MONTHS_HI = ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
+        
+        // === WEATHER TRANSLATIONS ===
         const WEATHER_MAP = { "Sunny": "खिली धूप", "Clear": "साफ़", "Partly cloudy": "आंशिक बादल", "Cloudy": "बादल", "Overcast": "घने बादल", "Mist": "कोहरा", "Rain": "बारिश", "Drizzle": "बूंदाबांदी", "Thunder": "तूफान", "Smoke": "धुआं", "Haze": "धुंध" };
 
         function translate(text) {
@@ -201,7 +167,22 @@
             return text;
         }
 
-        // Tithi Calculation
+        // === REAL INDIAN AQI CALCULATOR ===
+        // Maps Raw PM2.5 to Indian AQI Scale (Approximate)
+        function calculateAQI(pm25) {
+            if (!pm25) return "--";
+            let aqi = 0;
+            // Formula based on CPCB Breakpoints
+            if (pm25 <= 30) aqi = pm25 * (50/30);
+            else if (pm25 <= 60) aqi = 50 + (pm25-30) * (50/30);
+            else if (pm25 <= 90) aqi = 100 + (pm25-60) * (100/30);
+            else if (pm25 <= 120) aqi = 200 + (pm25-90) * (100/30);
+            else if (pm25 <= 250) aqi = 300 + (pm25-120) * (100/130);
+            else aqi = 400 + (pm25-250) * (100/130);
+            
+            return Math.round(aqi);
+        }
+
         function getTithi(date) {
             const knownNewMoon = new Date('2000-01-06T18:14:00Z');
             const diff = (date - knownNewMoon) / (1000 * 60 * 60 * 24);
@@ -229,14 +210,11 @@
             document.getElementById("cond").innerText = translate(cur.condition.text);
             document.getElementById("summary").innerText = `अधिकतम ${Math.round(today.day.maxtemp_c)}° • न्यूनतम ${Math.round(today.day.mintemp_c)}° • बारिश ${today.day.daily_chance_of_rain}%`;
             
-            // Art Selection
-            let art = ARTS.sun;
-            const textLower = cur.condition.text.toLowerCase();
-            const isNight = cur.is_day === 0;
-            if (textLower.includes("rain") || textLower.includes("drizzle")) art = ARTS.rain;
-            else if (textLower.includes("cloud") || textLower.includes("overcast") || textLower.includes("mist")) art = ARTS.cloud;
-            else if (isNight) art = ARTS.moon;
-            document.getElementById("heroArt").innerHTML = art;
+            // AQI CALCULATION
+            // We use PM2.5 from API if available to show "Real" AQI
+            const pm25 = cur.air_quality ? cur.air_quality.pm2_5 : 0;
+            const realAQI = calculateAQI(pm25);
+            document.getElementById("aqi").innerText = `AQI ${realAQI}`;
 
             // 3. Hourly
             let allHours = [...today.hour, ...f[1].hour];
@@ -287,13 +265,9 @@
             }
             document.getElementById("forecastRows").innerHTML = forecastHTML;
 
-            // 6. Quote (Based on Day of Month)
-            const quoteIndex = (now.getDate() - 1) % QUOTES_HI.length;
-            document.getElementById("quoteText").innerText = `"${QUOTES_HI[quoteIndex]}"`;
-
-            // 7. Astro
-            document.getElementById("sun-times").innerText = `${today.astro.sunrise} - ${today.astro.sunset}`;
-            document.getElementById("moon-times").innerText = `${today.astro.moonrise} - ${today.astro.moonset}`;
+            // 6. Astro
+            document.getElementById("sun-times").innerText = `☀️ ${today.astro.sunrise} - ${today.astro.sunset}`;
+            document.getElementById("moon-times").innerText = `🌙 ${today.astro.moonrise} - ${today.astro.moonset}`;
 
             document.getElementById("footerMsg").innerText = "Updated: " + loc.localtime.split(" ")[1];
         }
