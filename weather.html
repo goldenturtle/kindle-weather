@@ -4,19 +4,23 @@
     <meta charset="utf-8">
     <title>Kindle Weather Hindi</title>
     <style>
-        /* RESET & BASICS */
+        /* RESET */
         * { box-sizing: border-box; }
+        
+        /* BODY: Force Full Screen Whiteout */
         body {
             margin: 0;
-            padding: 15px;
+            /* 1. TOP MARGIN FIX: Pushes everything down by 50px */
+            padding-top: 50px; 
+            padding-left: 15px;
+            padding-right: 15px;
             background-color: white;
             color: black;
-            /* CRITICAL: Force exact Kindle resolution */
             width: 600px;
             height: 800px;
-            overflow: hidden; /* Cut off anything that doesn't fit */
+            overflow: hidden;
             
-            /* Font stack optimized for Hindi on Linux */
+            /* Font Stack */
             font-family: "Noto Sans Devanagari", "Lohit Devanagari", "Arial Unicode MS", sans-serif;
         }
 
@@ -27,37 +31,38 @@
             margin-bottom: 15px; 
             overflow: hidden; 
         }
-        .city { float: left; font-size: 32px; font-weight: bold; width: 75%; }
+        /* Adjusted font sizes to fit better */
+        .city { float: left; font-size: 32px; font-weight: bold; width: 70%; }
         .clock { float: right; font-size: 24px; font-weight: bold; margin-top: 5px;}
 
         /* MAIN DISPLAY */
-        .bigrow { margin-bottom: 15px; overflow: hidden; display: flex; align-items: center;}
-        .tempblock { float: left; width: 50%; }
-        .temp { font-size: 110px; font-weight: bold; line-height: 1; letter-spacing: -4px; }
+        .bigrow { margin-bottom: 10px; overflow: hidden; display: flex; align-items: center;}
+        .tempblock { float: left; width: 45%; }
+        .temp { font-size: 100px; font-weight: bold; line-height: 1; letter-spacing: -4px; }
         
-        .condblock { float: left; width: 50%; padding-left: 10px; }
-        .cond { font-size: 34px; font-weight: bold; display: block; margin-bottom: 8px;}
+        .condblock { float: left; width: 55%; padding-left: 10px; }
+        .cond { font-size: 30px; font-weight: bold; display: block; margin-bottom: 5px; line-height: 1.1;}
         .aqi { 
             display: inline-block; 
             border: 2px solid black; 
             border-radius: 12px; 
-            padding: 2px 10px; 
+            padding: 2px 8px; 
             font-weight: bold; 
-            font-size: 18px; 
+            font-size: 16px; 
         }
-        .feels { display: block; margin-top: 8px; font-size: 20px; opacity: 0.8; font-weight: bold;}
+        .feels { display: block; margin-top: 5px; font-size: 18px; opacity: 0.8; font-weight: bold;}
 
         /* CARDS ROW */
         .cards { display: flex; justify-content: space-between; margin-bottom: 15px; }
         .card { 
             width: 32%; 
-            border: 3px solid black; 
-            border-radius: 10px; 
-            padding: 8px; 
-            height: 220px; 
+            border: 2px solid black; 
+            border-radius: 8px; 
+            padding: 6px; 
+            height: 200px; 
         }
         .cardtitle { 
-            font-size: 18px; 
+            font-size: 16px; 
             font-weight: bold; 
             border-bottom: 2px solid black; 
             padding-bottom: 4px; 
@@ -66,18 +71,18 @@
         
         /* DATA TABLES */
         table { width: 100%; border-collapse: collapse; }
-        td { padding: 3px 0; font-size: 17px; font-weight: bold;}
+        td { padding: 2px 0; font-size: 16px; font-weight: bold;}
         .k { text-align: left; opacity: 0.7; }
         .v { text-align: right; }
 
         /* FORECAST */
         .forecastCard { 
-            border: 3px solid black; 
-            border-radius: 10px; 
-            padding: 10px; 
+            border: 2px solid black; 
+            border-radius: 8px; 
+            padding: 8px; 
         }
-        .forecastTitle { font-size: 20px; font-weight: bold; border-bottom: 2px solid black; margin-bottom: 5px; padding-bottom: 5px;}
-        .forecastTable td { border-bottom: 1px solid #ccc; padding: 6px 0; font-size: 20px;}
+        .forecastTitle { font-size: 18px; font-weight: bold; border-bottom: 2px solid black; margin-bottom: 5px; padding-bottom: 5px;}
+        .forecastTable td { border-bottom: 1px solid #ccc; padding: 5px 0; font-size: 18px;}
         
         /* FOOTER */
         .footer { 
@@ -85,7 +90,7 @@
             bottom: 5px; 
             width: 100%; 
             text-align: center; 
-            font-size: 14px; 
+            font-size: 12px; 
             color: #555; 
         }
     </style>
@@ -188,7 +193,6 @@
 
             // Forecast
             var rows = "";
-            // Helper to get Hindi Day Name
             var days = ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"];
             
             for(var i=1; i<=2; i++) {
