@@ -1,4 +1,4 @@
-name: Update Weather Dashboard
+name: Update Smart Dashboard
 
 on:
   schedule:
@@ -22,9 +22,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          npm install puppeteer
+          npm install puppeteer rss-parser
           sudo apt-get update
-          # Install Hindi fonts + ImageMagick
           sudo apt-get install -y fonts-noto fonts-noto-core fonts-noto-ui-core fonts-lohit-deva imagemagick
 
       - name: Generate Dashboard Image
@@ -34,50 +33,71 @@ jobs:
         run: |
           node -e "
           const puppeteer = require('puppeteer');
+          const Parser = require('rss-parser');
           const path = require('path');
           const https = require('https');
 
           (async () => {
             try {
-              // 1. Fetch Data
+              // 1. FETCH WEATHER
               const city = process.env.CITY_NAME || 'Mumbai';
               const key = process.env.API_KEY;
               if (!key) { console.error('KEY MISSING'); process.exit(1); }
-              const url = \`https://api.weatherapi.com/v1/forecast.json?key=\${key}&q=\${city}&days=3&aqi=yes&lang=hi\`;
-
-              console.log('Fetching...');
+              
+              console.log('Fetching Weather...');
+              const weatherUrl = \`https://api.weatherapi.com/v1/forecast.json?key=\${key}&q=\${city}&days=3&aqi=yes&lang=hi\`;
               const weatherData = await new Promise((resolve, reject) => {
-                https.get(url, (res) => {
+                https.get(weatherUrl, (res) => {
                   let data = '';
                   res.on('data', c => data += c);
                   res.on('end', () => resolve(JSON.parse(data)));
                 }).on('error', reject);
               });
 
+              // 2. FETCH NEWS (Google News Hindi)
+              console.log('Fetching News...');
+              const parser = new Parser();
+              const newsFeed = await parser.parseURL('https://news.google.com/rss?hl=hi&gl=IN&ceid=IN:hi');
+              const topHeadlines = newsFeed.items.slice(0, 5).map(item => item.title);
+
+              // 3. FETCH QUOTE (Quotable API)
+              console.log('Fetching Quote...');
+              const quoteData = await new Promise((resolve) => {
+                https.get('https://api.quotable.io/random?maxLength=60', (res) => {
+                  let data = '';
+                  res.on('data', c => data += c);
+                  res.on('end', () => {
+                     try { resolve(JSON.parse(data)); } catch { resolve({content: 'Keep pushing forward.', author: 'Unknown'}); }
+                  });
+                }).on('error', () => resolve({content: 'Make today count.', author: 'Unknown'}));
+              });
+
+              // 4. COMBINE DATA
+              const finalData = {
+                weather: weatherData,
+                news: topHeadlines,
+                quote: quoteData
+              };
+
+              // 5. RENDER
               const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], headless: 'new'});
               const page = await browser.newPage();
-              
-              // === CRITICAL: PAPERWHITE RESOLUTION ===
               await page.setViewport({ width: 758, height: 1024, deviceScaleFactor: 1 });
 
-              // Inject Data
-              await page.evaluateOnNewDocument((data) => { window.injectedData = data; }, weatherData);
+              await page.evaluateOnNewDocument((data) => { window.injectedData = data; }, finalData);
               
-              // Load File
               const htmlPath = path.resolve(process.env.GITHUB_WORKSPACE, 'weather.html');
               await page.goto('file://' + htmlPath, { waitUntil: 'networkidle0' });
               
-              // Screenshot
               await page.screenshot({ path: 'weather.png' });
               await browser.close();
+
             } catch (e) { console.error(e); process.exit(1); }
           })();
           "
 
       - name: Convert to Kindle Grayscale
         run: |
-          # Force the image to be exactly 758x1024 (Paperwhite Size)
-          # The \! tells it to force the size even if aspect ratio is different
           convert weather.png -resize 758x1024\! -background white -gravity center -extent 758x1024 -colorspace Gray -depth 8 -type Grayscale weather-gray.png
 
       - name: Save Image to GitHub
