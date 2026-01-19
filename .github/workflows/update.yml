@@ -15,21 +15,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Download and Process Image
+      - name: Download and Resize Image
         run: |
-          # 1. Install ImageMagick (Standard Linux tool for image editing)
           sudo apt-get update
           sudo apt-get install -y imagemagick
 
-          # 2. Download directly from wttr.in (It generates the PNG for us)
-          # Mumbai.png = The location
-          # ?0 = Current weather only (Removes complex forecast text)
-          # ?Q = Quiet version (Cleaner)
+          # 1. Download the raw weather image
           curl "https://wttr.in/Mumbai.png?0Q" --output weather-orig.png
 
-          # 3. Convert to Kindle Grayscale (Critical for 5.3.3)
-          # This forces the image into the 8-bit format your screen expects
-          convert weather-orig.png -colorspace Gray -depth 8 -type Grayscale weather-gray.png
+          # 2. IMAGE MAGIC:
+          # -resize 180%   -> Makes the text bigger (Zoom In)
+          # -background white -> Adds white background
+          # -gravity center -> Centers the image
+          # -extent 600x800 -> Forces the final image to be exact Kindle size
+          # -colorspace Gray -> Ensures no "Black Bar" error
+          
+          convert weather-orig.png -resize 180% -background white -gravity center -extent 600x800 -colorspace Gray -depth 8 -type Grayscale weather-gray.png
 
       - name: Save Image to GitHub
         run: |
