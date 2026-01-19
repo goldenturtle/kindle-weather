@@ -20,13 +20,15 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Dependencies
-        # We install Puppeteer to "browse" your HTML file
-        run: npm install puppeteer
+      - name: Install Dependencies & Hindi Fonts
+        run: |
+          npm install puppeteer
+          # === THIS FIXES THE SQUARES ===
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto fonts-noto-core fonts-noto-ui-core fonts-lohit-deva
 
       - name: Generate Dashboard Image
         env:
-          # This pulls the keys from the "Secrets" vault we set up earlier
           API_KEY: ${{ secrets.WEATHER_API_KEY }}
           CITY_NAME: ${{ secrets.CITY }}
         run: |
@@ -38,57 +40,46 @@ jobs:
 
           (async () => {
             try {
-              // 1. Fetch Data Manually (No external fetch lib needed)
+              // 1. Fetch Data
               const city = process.env.CITY_NAME || 'Mumbai';
               const key = process.env.API_KEY;
-              if (!key) { console.error('API KEY MISSING!'); process.exit(1); }
+              if (!key) { console.error('KEY MISSING'); process.exit(1); }
               
-              const url = \`https://api.weatherapi.com/v1/forecast.json?key=\${key}&q=\${city}&days=3&aqi=yes\`;
-              
-              console.log('Fetching weather for:', city);
-              
+              const url = \`https://api.weatherapi.com/v1/forecast.json?key=\${key}&q=\${city}&days=3&aqi=yes&lang=hi\`;
+              // Added &lang=hi to get Hindi condition text from API!
+
+              console.log('Fetching...');
               const weatherData = await new Promise((resolve, reject) => {
                 https.get(url, (res) => {
                   let data = '';
-                  res.on('data', (chunk) => data += chunk);
+                  res.on('data', c => data += c);
                   res.on('end', () => resolve(JSON.parse(data)));
                 }).on('error', reject);
               });
 
-              if (weatherData.error) {
-                 console.error('API Error:', weatherData.error.message);
-                 process.exit(1);
-              }
-
-              // 2. Launch Browser (Safety Sandbox Enabled)
+              // 2. Launch Browser
               const browser = await puppeteer.launch({
                 args: ['--no-sandbox', '--disable-setuid-sandbox'],
                 headless: 'new'
               });
               const page = await browser.newPage();
-              await page.setViewport({ width: 600, height: 800 });
+              // EXACT Kindle Resolution
+              await page.setViewport({ width: 600, height: 800, deviceScaleFactor: 1 });
 
               // 3. Inject Data
-              // We put the data into the page before it even loads
               await page.evaluateOnNewDocument((data) => {
                 window.injectedData = data;
               }, weatherData);
 
-              // 4. Load your local HTML file
-              // This finds 'weather.html' in the main folder
+              // 4. Load File
               const htmlPath = path.resolve(process.env.GITHUB_WORKSPACE, 'weather.html');
-              const fileUrl = 'file://' + htmlPath;
-              console.log('Loading File:', fileUrl);
-              
-              await page.goto(fileUrl, { waitUntil: 'networkidle0' });
+              await page.goto('file://' + htmlPath, { waitUntil: 'networkidle0' });
 
               // 5. Screenshot
               await page.screenshot({ path: 'weather.png' });
               await browser.close();
-              
-            } catch (error) {
-              console.error('Script Failed:', error);
-              process.exit(1);
+            } catch (e) {
+              console.error(e); process.exit(1);
             }
           })();
           "
@@ -96,8 +87,8 @@ jobs:
       - name: Convert to Kindle Grayscale
         run: |
           sudo apt-get install -y imagemagick
-          # Convert to 8-bit grayscale (Fixes black bar issue)
-          convert weather.png -colorspace Gray -depth 8 -type Grayscale weather-gray.png
+          # Resize/Extent ensures it is ALWAYS 600x800 white background
+          convert weather.png -resize 600x800 -background white -gravity center -extent 600x800 -colorspace Gray -depth 8 -type Grayscale weather-gray.png
 
       - name: Save Image to GitHub
         run: |
