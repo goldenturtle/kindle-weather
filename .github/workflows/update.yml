@@ -1,0 +1,61 @@
+name: Update Weather Image
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Run every hour
+  workflow_dispatch:      # Allows manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Puppeteer
+        run: npm install puppeteer
+
+      - name: Capture Weather Screenshot
+        run: |
+          node -e "
+          const puppeteer = require('puppeteer');
+          (async () => {
+            // THE FIX: We add --no-sandbox to prevent GitHub crashes
+            const browser = await puppeteer.launch({
+              args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+            });
+            const page = await browser.newPage();
+            
+            // Set Kindle Resolution
+            await page.setViewport({width: 600, height: 800});
+            
+            // Go to Weather (Clean Layout)
+            await page.goto('https://wttr.in/Mumbai?3&GF&lang=en', {waitUntil: 'networkidle0'});
+            
+            // Take Screenshot
+            await page.screenshot({path: 'weather.png'});
+            await browser.close();
+          })();
+          "
+
+      - name: Convert to Grayscale
+        # Uses ImageMagick to fix the 'Black Bar' issue
+        run: |
+          sudo apt-get install -y imagemagick
+          convert weather.png -colorspace Gray -depth 8 -type Grayscale weather-gray.png
+
+      - name: Save Image
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add weather-gray.png
+          git commit -m "Update weather" || echo "No changes"
+          git push
